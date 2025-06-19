@@ -1,0 +1,294 @@
+@import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Quicksand:wght@300..700&display=swap");
+:root {
+  /* Header Root elements */
+  --header-global-bg: #0e0e10;
+  --header-bg: #121212;
+  --header-hover-bg: #1a1a1d;
+  --header-logo-color: #6a0dad;
+  --header-title-color: #ffffff;
+  --header-link-color: #cccccc;
+  --header-link-hover-color: #00ffe7;
+  --header-border-color: #333333;
+  --header-btn-bg: #6a0dad;
+  --header-btn-hover-bg: #8e2de2;
+  --header-btn-active-bg: #5e00c0;
+  --header-btn-border-color: #9c27b0;
+  --header-text-color: #ffffff;
+  --header-btn-active-color: #ffffff;
+  --header-shadow-1: 0 2px 50px rgba(106, 13, 173, 0.5);
+  --header-shadow-2: 0 4px 50px rgba(106, 13, 173, 0.3);
+  --header-shadow-3: 0 8px 50px rgba(106, 13, 173, 0.2);
+}
+/* Global reset */
+html {
+  scroll-behavior: smooth;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: poppins;
+  transition: all 200ms;
+}
+/* styling the body */
+body {
+  width: 100%;
+  overflow-x: hidden;
+  background-color: var(--header-global-bg);
+  height: 100vh;
+}
+/* styling the header */
+@keyframes headerShadowChange {
+  0% {
+    box-shadow: var(--header-shadow-1);
+  }
+  100% {
+    box-shadow: var(--header-shadow-2);
+  }
+}
+header {
+  width: 100%;
+  height: 10vh;
+  background-color: var(--header-bg);
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  z-index: 3456789;
+  justify-content: space-evenly;
+  box-shadow: var(--header-shadow-1);
+  animation: headerShadowChange 2s ease-in-out forwards;
+}
+header .head-left {
+  display: flex;
+  width: 15vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 100%;
+}
+header .head-left span {
+  color: var(--header-logo-color);
+  font-size: 2rem;
+}
+header .head-left h2 {
+  color: var(--header-title-color);
+  font-size: 1rem;
+}
+header .head-center {
+  width: 50vw;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+header .head-center ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  list-style: none;
+}
+header .head-center ul li {
+  position: relative;
+}
+header .head-center ul li a:after {
+  content: "";
+  width: 0%;
+  height: 3px;
+  background-color: var(--header-border-color);
+  position: absolute;
+  left: 50%;
+  top: 130%;
+  transform: translate(-50%, -50%);
+}
+header .head-center ul li a:hover::after {
+  width: 100%;
+}
+header .head-center ul li a {
+  color: var(--header-link-color);
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+header .head-center ul li a:hover {
+  color: var(--header-link-hover-color);
+}
+header .head-right {
+  width: 23vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header .head-right .register-btn {
+  width: 4rem;
+  height: 2rem;
+  background-color: var(--header-btn-bg);
+  color: var(--header-text-color);
+  border: none;
+  font-size: 0.7rem;
+  border-radius: 7px;
+  cursor: pointer;
+  border: 1px solid var(--header-btn-border-color);
+}
+header .head-right .register-btn:hover {
+  background-color: var(--header-btn-hover-bg);
+  transform: scale(1.05);
+}
+header .head-right .register-btn:active {
+  background-color: var(--header-btn-active-bg);
+  border-color: var(--header-btn-active-color);
+}
+header .head-right h4 {
+  font-size: 0.7rem;
+  color: var(--header-title-color);
+}
+header .head-right h4 a {
+  color: red;
+  text-decoration: none;
+  position: relative;
+}
+header .head-right h4 a::after {
+  content: "";
+  width: 0%;
+  height: 3px;
+  background-color: red;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+header .head-right h4 a:hover::after {
+  width: 100%;
+}
+/* Responsive header styles */
+@media (max-width: 1024px) {
+  header {
+    height: 12vh;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0 1rem;
+  }
+  header .head-left,
+  header .head-center,
+  header .head-right {
+    width: 100vw;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+  }
+  header .head-center ul {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+.menu-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 1rem;
+  font-size: 2rem;
+  color: var(--header-link-color);
+  position: absolute;
+  left: 0;
+  margin-top: -1rem;
+  width: 4rem;
+  color: white;
+  top: 3vh;
+}
+header .head-right .menu-btn:hover {
+  background-color: transparent;
+}
+@media (max-width: 1500px) {
+  header .head-right h4 {
+    font-size: 0.7rem;
+  }
+  header .head-left h2 {
+    font-size: 1rem;
+  }
+  header .head-right h4 {
+    display: none;
+  }
+}
+@media (max-width: 1200px) {
+  header .head-right .register-btn {
+    position: absolute;
+    right: 3%;
+    top: 3vh;
+    width: 4rem;
+    margin-top: -0.5rem;
+    font-size: 0.7rem;
+  }
+  header .head-left h2 {
+    font-size: 1rem;
+  }
+  header .head-right h4 {
+    display: none;
+  }
+  header .head-center.open {
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 1025px) {
+  header .head-left h2 {
+    font-size: 1rem;
+  }
+  header .head-left span {
+    font-size: 2.5rem;
+  }
+  .menu-btn {
+    display: block;
+  }
+  header {
+    height: 8vh;
+  }
+  .main-content {
+    margin-top: 8vh;
+  }
+  header .head-right .menu-btn span {
+    color: #ffff;
+  }
+  .head-right .register-btn {
+    position: absolute;
+    right: 3%;
+    top: 3vh;
+    width: 4rem;
+    margin-top: -0.5rem;
+    font-size: 0.7rem;
+  }
+  header .head-right h4 {
+    display: none;
+  }
+  header .head-center {
+    display: none;
+    width: 100vw;
+    background: var(--header-bg);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 100;
+    padding: 1rem 0;
+  }
+  header .head-center.open {
+    height: 30vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  header .head-center ul {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+}
