@@ -14,24 +14,28 @@ import Layout from "./components/Layout";
 function App() {
   return (
     <Routes>
-      {/* Public Routes */}
+      {/* Public Auth Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/forgot-password" element={<ResetPassword />} />{" "}
-      {/* Protected Routes with Layout (Header) */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <Layout />
-          </ProtectedRoute>
-        }
-      >
+      <Route path="/forgot-password" element={<ResetPassword />} />
+
+      {/* Public Pages with Layout */}
+      <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/products" element={<Products />} />
         <Route path="/product/:id" element={<GameDetails />} />
-        <Route path="/cart" element={<Cart />} />
         <Route path="/support" element={<Support />} />
+
+        {/* Protected Route: Cart Only */}
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     </Routes>
   );
