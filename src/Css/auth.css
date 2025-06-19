@@ -206,3 +206,20 @@
     transform: scale(1.2) translate(20px, 10px);
   }
 }
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 35px;
+}
+
+.toggle-password-icon {
+  position: absolute;
+  top: 56%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}

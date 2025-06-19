@@ -6,7 +6,7 @@ const Layout = () => {
     <>
       <Header />
       {/* Container div to offset fixed header height */}
-      <div style={{ marginTop: "10vh", marginLeft: "10vh" }}>
+      <div style={{ marginTop: "10vh" }}>
         <Outlet />
       </div>
     </>

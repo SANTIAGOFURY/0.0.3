@@ -8,6 +8,7 @@ import {
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
@@ -18,6 +19,8 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -26,28 +29,20 @@ const Signup = () => {
     const birth = new Date(birthDate);
     let age = today.getFullYear() - birth.getFullYear();
     const m = today.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
     return age;
   };
 
   const friendlyErrorMessage = (code) => {
     switch (code) {
       case "auth/email-already-in-use":
-        return "This email is already registered. Try logging in instead.";
+        return "This email is already registered.";
       case "auth/invalid-email":
-        return "Please enter a valid email address.";
-      case "auth/operation-not-allowed":
-        return "Signing up with email and password is currently disabled.";
+        return "Enter a valid email address.";
       case "auth/weak-password":
-        return "Password is too weak. Please use at least 6 characters.";
-      case "auth/popup-closed-by-user":
-        return "Sign-in popup closed before completing. Please try again.";
-      case "auth/cancelled-popup-request":
-        return "Multiple sign-in requests detected. Please try again.";
+        return "Password too weak. Use at least 6 characters.";
       default:
-        return "Oops! Something went wrong. Please try again.";
+        return "Something went wrong. Please try again.";
     }
   };
 
@@ -55,21 +50,12 @@ const Signup = () => {
     e.preventDefault();
     setError("");
 
-    if (!dob) {
-      setError("Please enter your date of birth.");
-      return;
-    }
-
+    if (!dob) return setError("Please enter your date of birth.");
     const age = calculateAge(dob);
-    if (age < 10) {
-      setError("Sorry, you must be at least 10 years old to sign up.");
-      return;
-    }
+    if (age < 10) return setError("You must be at least 10 years old.");
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match. Please check and try again.");
-      return;
-    }
+    if (password !== confirmPassword)
+      return setError("Passwords do not match.");
 
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -77,56 +63,30 @@ const Signup = () => {
         email,
         password
       );
-
-      await updateProfile(userCredential.user, {
-        displayName: fullName,
-      });
-
-      // You can save phone/dob to Firestore here if needed
-
+      await updateProfile(userCredential.user, { displayName: fullName });
       navigate("/");
     } catch (err) {
-      if (err.code) {
-        setError(friendlyErrorMessage(err.code));
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Oops! Something went wrong. Please try again.");
-      }
+      setError(friendlyErrorMessage(err.code || err.message));
     }
   };
 
   const handleGoogleSignup = async () => {
     setError("");
-    const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, new GoogleAuthProvider());
       navigate("/");
     } catch (err) {
-      if (err.code) {
-        setError("Google sign-in error: " + friendlyErrorMessage(err.code));
-      } else if (err instanceof Error) {
-        setError("Google sign-in failed: " + err.message);
-      } else {
-        setError("Google sign-in failed. Please try again.");
-      }
+      setError("Google sign-in error: " + friendlyErrorMessage(err.code));
     }
   };
 
   const handleGithubSignup = async () => {
     setError("");
-    const provider = new GithubAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, new GithubAuthProvider());
       navigate("/");
     } catch (err) {
-      if (err.code) {
-        setError("GitHub sign-in error: " + friendlyErrorMessage(err.code));
-      } else if (err instanceof Error) {
-        setError("GitHub sign-in failed: " + err.message);
-      } else {
-        setError("GitHub sign-in failed. Please try again.");
-      }
+      setError("GitHub sign-in error: " + friendlyErrorMessage(err.code));
     }
   };
 
@@ -136,12 +96,10 @@ const Signup = () => {
       {error && <p className="signup-error">{error}</p>}
 
       <button className="oauth-btn google" onClick={handleGoogleSignup}>
-        <FcGoogle size={22} />
-        Continue with Google
+        <FcGoogle size={22} /> Continue with Google
       </button>
       <button className="oauth-btn github" onClick={handleGithubSignup}>
-        <FaGithub size={22} />
-        Continue with GitHub
+        <FaGithub size={22} /> Continue with GitHub
       </button>
 
       <form onSubmit={handleSignup}>
@@ -154,7 +112,6 @@ const Signup = () => {
         />
         <input
           type="date"
-          placeholder="Date of Birth"
           value={dob}
           onChange={(e) => setDob(e.target.value)}
           required
@@ -166,7 +123,7 @@ const Signup = () => {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           pattern="^\+?\d{7,15}$"
-          title="Enter a valid phone number (7 to 15 digits, optional +)"
+          title="Enter a valid phone number (7 to 15 digits)"
           required
         />
         <input
@@ -176,22 +133,52 @@ const Signup = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
+
+        {/* Password field with visibility toggle */}
+        <div className="password-input-wrapper">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <span
+            className="toggle-password-icon"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? (
+              <MdVisibilityOff size={20} />
+            ) : (
+              <MdVisibility size={20} />
+            )}
+          </span>
+        </div>
+
+        {/* Confirm Password with toggle */}
+        <div className="password-input-wrapper">
+          <input
+            type={showConfirm ? "text" : "password"}
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          <span
+            className="toggle-password-icon"
+            onClick={() => setShowConfirm((prev) => !prev)}
+          >
+            {showConfirm ? (
+              <MdVisibilityOff size={20} />
+            ) : (
+              <MdVisibility size={20} />
+            )}
+          </span>
+        </div>
+
         <button type="submit">Sign Up</button>
       </form>
+
       <p>
         Already have an account? <a href="/login">Login here</a>
       </p>

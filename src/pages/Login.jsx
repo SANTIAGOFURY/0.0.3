@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./../Css/auth.css";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider, githubProvider } from "../firebase";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -38,13 +40,7 @@ const Login = () => {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/");
     } catch (err) {
-      if (err.code) {
-        setError(friendlyErrorMessage(err.code));
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Oops! Something went wrong. Please try again.");
-      }
+      setError(friendlyErrorMessage(err.code || err.message));
     }
   };
 
@@ -54,13 +50,10 @@ const Login = () => {
       await signInWithPopup(auth, googleProvider);
       navigate("/");
     } catch (err) {
-      if (err.code) {
-        setError("Google sign-in error: " + friendlyErrorMessage(err.code));
-      } else if (err instanceof Error) {
-        setError("Google sign-in failed: " + err.message);
-      } else {
-        setError("Google sign-in failed. Please try again.");
-      }
+      setError(
+        "Google sign-in failed: " +
+          friendlyErrorMessage(err.code || err.message)
+      );
     }
   };
 
@@ -70,13 +63,10 @@ const Login = () => {
       await signInWithPopup(auth, githubProvider);
       navigate("/");
     } catch (err) {
-      if (err.code) {
-        setError("GitHub sign-in error: " + friendlyErrorMessage(err.code));
-      } else if (err instanceof Error) {
-        setError("GitHub sign-in failed: " + err.message);
-      } else {
-        setError("GitHub sign-in failed. Please try again.");
-      }
+      setError(
+        "GitHub sign-in failed: " +
+          friendlyErrorMessage(err.code || err.message)
+      );
     }
   };
 
@@ -95,15 +85,26 @@ const Login = () => {
           required
         />
 
-        <input
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div className="password-input-wrapper">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <span
+            className="toggle-password-icon"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? (
+              <MdVisibilityOff size={20} />
+            ) : (
+              <MdVisibility size={20} />
+            )}
+          </span>
+        </div>
 
-        {/* Forgot password link */}
         <p className="forgot-password-container">
           <a href="/forgot-password" className="forgot-password-link">
             Forgot password?

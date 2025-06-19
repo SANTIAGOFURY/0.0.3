@@ -47,8 +47,14 @@ function Header() {
       </div>
 
       <div className="head-right">
+        <h4>
+          Made it with love by{" "}
+          <a href="" style={{ color: "red" }}>
+            The One Eye Coder
+          </a>
+        </h4>
         <button
-          className="logout-btn"
+          className="register-btn"
           onClick={handleLogout}
           aria-label="Logout"
         >
