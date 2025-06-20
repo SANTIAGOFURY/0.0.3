@@ -11,7 +11,6 @@ function Products() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Search overrides genre filtering
   const displayedGames = searchTerm
     ? games.filter((game) =>
         game.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -69,7 +68,7 @@ function Products() {
                     <h3>{game.title}</h3>
                     <p className="price">{game.price}</p>
                     <p className="rating">⭐ {game.rating}</p>
-                    <Link to={`/products/${game.id}`} className="btn-secondary">
+                    <Link to={`/product/${game.id}`} className="btn-secondary">
                       View Details
                     </Link>
                   </div>

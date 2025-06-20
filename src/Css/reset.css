@@ -1,7 +1,6 @@
 .auth-reset-container {
   width: 40%;
-  max-width: 480px; /* max fixed width for large screens */
-  margin: 0 auto;
+  max-width: 480px; 
   padding: 2rem;
   background: #1a1a2e;
   border-radius: 16px;

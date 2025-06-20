@@ -7,6 +7,8 @@ import {
   GithubAuthProvider,
 } from "firebase/auth";
 
+import { getFirestore } from "firebase/firestore"; // ✅ Add this
+
 // Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyBUx-YhQlJqJ2e5RRklBpPsdM2RBaQH-Ek",
@@ -21,6 +23,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app); // ✅ Initialize Firestore
 
 // Set persistence to local (keeps user signed in across tabs and sessions)
 setPersistence(auth, browserLocalPersistence).catch((error) => {
@@ -31,4 +34,5 @@ setPersistence(auth, browserLocalPersistence).catch((error) => {
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
 
-export { auth, googleProvider, githubProvider };
+// ✅ Export everything needed
+export { auth, db, googleProvider, githubProvider };

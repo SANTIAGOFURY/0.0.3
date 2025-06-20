@@ -10,34 +10,31 @@ import Signup from "./pages/Signup";
 import ResetPassword from "./pages/ResetPassword";
 import ProtectedRoute from "./ProtectedRoute";
 import Layout from "./components/Layout";
-
+import { CartProvider } from "./context/CartContext"; // Import CartProvider
 function App() {
   return (
-    <Routes>
-      {/* Public Auth Routes */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/forgot-password" element={<ResetPassword />} />
-
-      {/* Public Pages with Layout */}
-      <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/product/:id" element={<GameDetails />} />
-        <Route path="/support" element={<Support />} />
-
-        {/* Protected Route: Cart Only */}
-        <Route
-          path="/cart"
-          element={
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
-          }
-        />
-      </Route>
-    </Routes>
+    <CartProvider>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ResetPassword />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/product/:id" element={<GameDetails />} />
+          <Route path="/support" element={<Support />} />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+      </Routes>
+    </CartProvider>
   );
 }
 

@@ -200,14 +200,12 @@
   z-index: -1;
 }
 
-/* Featured Section Title */
 .featured-section h2 {
   color: var(--home-text-color);
   font-size: 1.4rem;
   margin-bottom: 0.4rem;
 }
 
-/* Container Layout */
 .container {
   display: flex;
   flex-wrap: wrap;
@@ -216,9 +214,8 @@
   padding: 0.3rem;
 }
 
-/* Game Card */
 .game-card {
-  flex: 0 0 calc(20% - 1.6rem); /* 5 cards per row */
+  flex: 0 0 calc(20% - 1.6rem); 
   height: 300px;
   border-radius: var(--home-card-border-radius);
   overflow: hidden;
@@ -231,7 +228,6 @@
   transform: scale(1.03);
 }
 
-/* Image Wrapper */
 .image-wrapper {
   width: 100%;
   height: 100%;
@@ -245,7 +241,6 @@
   filter: brightness(0.5);
 }
 
-/* Overlay Content */
 .card-content {
   position: absolute;
   top: 50%;
@@ -254,9 +249,7 @@
   color: var(--home-text-color);
   text-align: center;
 }
-
-/* Game Title */
-.card-content h3 {
+.featured-section .card-content h3 {
   color: #fff;
   margin-bottom: 0.3rem;
   font-size: 0.8rem;
@@ -268,26 +261,20 @@
   text-align: center;
   position: absolute;
   top: -70%;
-  left: -2rem;
-  width: 15rem;
+  left: 3rem;
+  width: 17rem;
   transform: translateX(-3.8rem);
 }
-
-/* Price */
 .card-content .price {
   color: gold;
   font-weight: bold;
   margin-bottom: 0.3rem;
 }
-
-/* Rating */
 .card-content .rating {
   font-size: 0.85rem;
   color: #ffffffcc;
   margin-bottom: 0.6rem;
 }
-
-/* View Details Button */
 .card-content .btn-secondary {
   background-color: var(--home-btn-bg);
   color: var(--home-btn-text-color);
@@ -307,32 +294,26 @@
   align-items: center;
   justify-content: center;
 }
-
 .card-content .btn-secondary:hover {
   background-color: var(--home-btn-hover-bg);
 }
-
-/* ===============================
-       Responsive Layout Adjustments
-       =============================== */
-
 @media (max-width: 1200px) {
   .game-card {
-    flex: 0 0 calc(25% - 1.6rem); /* 4 per row */
+    flex: 0 0 calc(25% - 1.6rem); 
   }
 }
 
 @media (max-width: 992px) {
   .game-card {
     min-width: 15rem;
-    flex: 0 0 calc(33.33% - 1.6rem); /* 3 per row */
+    flex: 0 0 calc(33.33% - 1.6rem); 
   }
 }
 
 @media (max-width: 768px) {
   .game-card {
     min-width: 15rem;
-    flex: 0 0 calc(50% - 1.6rem); /* 2 per row */
+    flex: 0 0 calc(50% - 1.6rem); 
   }
 
   .card-content h3 {
@@ -360,7 +341,7 @@
   }
 
   .game-card {
-    flex: 0 0 100%; /* 1 per row */
+    flex: 0 0 100%; 
   }
 
   .card-content .btn-secondary {
@@ -390,11 +371,11 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-  opacity: 0.2; /* Adjust the opacity here */
+  opacity: 0.2;
   z-index: -1;
 }
 .Home-genres {
-  padding: 6rem 1rem 3rem; /* Added top space for heading */
+  padding: 6rem 1rem 3rem; 
   text-align: center;
   background-color: var(--home-bg);
   color: var(--home-text-color);
@@ -424,7 +405,6 @@
   margin-top: 5rem;
 }
 
-/* Genre Card */
 .genre-card {
   background: var(--home-card-bg);
   box-shadow: var(--home-card-shadow);
@@ -441,16 +421,12 @@
   min-width: 10rem;
 }
 
-/* Hover */
 .genre-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 0 25px var(--home-accent-hover);
   background-color: var(--home-accent-hover);
 }
 
-/* ====================
-        RESPONSIVENESS
-     ==================== */
 
 @media (max-width: 1024px) {
   .genre-card {

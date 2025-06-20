@@ -1,7 +1,7 @@
-/* Global for auth containers */
+
 .auth-container {
   width: 90%;
-  max-width: 420px; /* max fixed width */
+  max-width: 420px; 
   margin: 0 auto;
   padding: 2rem;
   background: #1a1a2e;
@@ -15,7 +15,6 @@
   box-sizing: border-box;
 }
 
-/* Heading */
 .auth-container h2 {
   text-align: center;
   font-size: clamp(1.2rem, 2vw, 1.5rem);
@@ -24,14 +23,12 @@
   color: #fff;
 }
 
-/* Form Styling */
 .auth-container form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-/* Inputs */
 .auth-container input {
   padding: 0.75rem 1rem;
   border: none;
@@ -50,7 +47,6 @@
   outline: none;
 }
 
-/* Submit Button */
 .auth-container button[type="submit"] {
   padding: 0.75rem 1rem;
   border: none;
@@ -69,7 +65,6 @@
   background: #8e2de2;
 }
 
-/* Links and paragraphs */
 .auth-container p {
   text-align: center;
   font-size: clamp(0.75rem, 1vw, 0.85rem);
@@ -87,7 +82,6 @@
   text-decoration: underline;
 }
 
-/* Error message */
 .signup-error {
   color: #ff4d4f;
   background: #2d2d5a;
@@ -100,12 +94,12 @@
   box-sizing: border-box;
 }
 
-/* OAuth buttons */
+
 .oauth-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem; /* space between icon and text */
+  gap: 0.75rem; 
   font-weight: 600;
   cursor: pointer;
   padding: 0.75rem 1rem;
@@ -138,7 +132,6 @@
   background: #444;
 }
 
-/* Mobile Responsive */
 @media (max-width: 900px) {
   .auth-container {
     max-width: 90vw;
@@ -173,7 +166,6 @@
   }
 }
 
-/* Optional blob backgrounds */
 #blob1,
 #blob2 {
   position: absolute;
@@ -196,7 +188,6 @@
   animation: blobFill 40s infinite ease-in-out reverse;
 }
 
-/* Keyframes for blob animation (optional) */
 @keyframes blobFill {
   0%,
   100% {

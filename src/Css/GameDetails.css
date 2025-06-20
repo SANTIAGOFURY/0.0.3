@@ -1,0 +1,213 @@
+/* ==== Global Styles ==== */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* ==== Game Details Page ==== */
+.game-details-page {
+  position: relative;
+  margin-top: 4rem;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: #121212;
+  color: white;
+  overflow: hidden;
+}
+
+/* ==== Background Image ==== */
+.game-details-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/images/blob4.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.4;
+  z-index: 1;
+}
+
+/* ==== Details Container ==== */
+.game-details {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  width: 90%;
+  max-width: 1200px;
+  background: rgba(30, 30, 30, 0.95);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
+  border: 2px solid gold;
+  z-index: 1;
+}
+
+/* ==== Game Cover Image ==== */
+.game-img {
+  width: 400px;
+  max-width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+/* ==== Game Info ==== */
+.game-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.game-info h2 {
+  margin: 0;
+  font-size: 2rem;
+  color: #fff;
+}
+
+.game-info p {
+  margin: 0;
+  font-size: 1rem;
+  color: #ccc;
+  line-height: 1.6;
+}
+
+.game-description {
+  font-size: 1rem;
+  color: #ddd;
+  margin-top: 1rem;
+  line-height: 1.6;
+}
+
+/* ==== Buttons ==== */
+.btn-buy,
+.btn-back {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-buy {
+  background-color: #6a0dad;
+  color: #fff;
+}
+
+.btn-buy:hover {
+  background-color: #5800b3;
+}
+
+.btn-back {
+  background-color: #444;
+  color: #fff;
+  margin-left: 1rem;
+}
+
+.btn-back:hover {
+  background-color: #333;
+}
+
+/* ==== Not Found Message ==== */
+.not-found {
+  text-align: center;
+  color: #fff;
+  font-size: 1.5rem;
+  padding: 2rem;
+}
+
+/* ===================== Responsive Design ===================== */
+
+/* ==== Tablets ==== */
+@media (max-width: 1024px) {
+  .game-details {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    padding: 1.5rem;
+  }
+
+  .game-img {
+    width: 100%;
+    max-width: 350px;
+    margin-bottom: 1.5rem;
+  }
+
+  .game-info h2 {
+    font-size: 1.8rem;
+  }
+
+  .btn-buy,
+  .btn-back {
+    width: 100%;
+    font-size: 1rem;
+    margin-left: 0;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* ==== Phones ==== */
+@media (max-width: 600px) {
+  .game-details-page {
+    padding: 1rem;
+    margin-top: 2rem;
+  }
+
+  .game-details {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .game-img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .game-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .game-info p,
+  .game-description {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .btn-buy,
+  .btn-back {
+    font-size: 0.9rem;
+    padding: 12px 0;
+  }
+}
+
+/* ==== Very Small Phones ==== */
+@media (max-width: 400px) {
+  .game-info h2 {
+    font-size: 1.3rem;
+  }
+
+  .game-info p,
+  .game-description {
+    font-size: 0.85rem;
+  }
+
+  .btn-buy,
+  .btn-back {
+    font-size: 0.85rem;
+    padding: 10px 0;
+  }
+}

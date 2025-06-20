@@ -31,7 +31,19 @@ const games = [
     cover: "/images/Covers/Cyberpunk 2077.jpeg",
     rating: 4.2,
     genre: "Action",
+    videoUrl: "/videos/Cyberpunk 2077 Trailer.mp4",
+    description: `Cyberpunk 2077 is an open-world action RPG set in the dark future of Night City.
+  You play as V, a customizable mercenary navigating a society obsessed with power, cybernetics, and body mods.
+  Explore vast, detailed city districts filled with gangs, corporations, and underground tech dealers.
+  Engage in intense first-person combat using guns, blades, hacking, and stealth.
+  Your choices shape the story with multiple branching paths and endings.
+  Upgrade your character with cyberware to enhance strength, reflexes, and abilities.
+  Meet iconic characters like Johnny Silverhand, played by Keanu Reeves.
+  Take on gigs, side quests, and narrative-driven missions in a fully immersive world.
+  The game combines cinematic storytelling with deep customization and RPG mechanics.
+  A must-play for fans of sci-fi, futuristic worlds, and rich narrative experiences.`,
   },
+
   {
     id: 5,
     title: "Red Dead Redemption 2",
