@@ -109,7 +109,7 @@
   border: 2px solid gold;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1500px) {
   .Hero-Section {
     flex-direction: column;
     justify-content: center;
@@ -215,7 +215,7 @@
 }
 
 .game-card {
-  flex: 0 0 calc(20% - 1.6rem); 
+  flex: 0 0 calc(20% - 1.6rem);
   height: 300px;
   border-radius: var(--home-card-border-radius);
   overflow: hidden;
@@ -299,21 +299,21 @@
 }
 @media (max-width: 1200px) {
   .game-card {
-    flex: 0 0 calc(25% - 1.6rem); 
+    flex: 0 0 calc(25% - 1.6rem);
   }
 }
 
 @media (max-width: 992px) {
   .game-card {
     min-width: 15rem;
-    flex: 0 0 calc(33.33% - 1.6rem); 
+    flex: 0 0 calc(33.33% - 1.6rem);
   }
 }
 
 @media (max-width: 768px) {
   .game-card {
     min-width: 15rem;
-    flex: 0 0 calc(50% - 1.6rem); 
+    flex: 0 0 calc(50% - 1.6rem);
   }
 
   .card-content h3 {
@@ -341,7 +341,7 @@
   }
 
   .game-card {
-    flex: 0 0 100%; 
+    flex: 0 0 100%;
   }
 
   .card-content .btn-secondary {
@@ -375,7 +375,7 @@
   z-index: -1;
 }
 .Home-genres {
-  padding: 6rem 1rem 3rem; 
+  padding: 6rem 1rem 3rem;
   text-align: center;
   background-color: var(--home-bg);
   color: var(--home-text-color);
@@ -426,7 +426,6 @@
   box-shadow: 0 0 25px var(--home-accent-hover);
   background-color: var(--home-accent-hover);
 }
-
 
 @media (max-width: 1024px) {
   .genre-card {

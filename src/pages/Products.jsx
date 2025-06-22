@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import games from "../Data/games";
 import genres from "../Data/Genres";
 import "../Css/Products.css";
+import { useCart } from "../context/CartContext"; // ✅ import useCart
 
 function Products() {
   const location = useLocation();
@@ -10,6 +11,9 @@ function Products() {
   const selectedGenre = queryParams.get("genre");
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [message, setMessage] = useState(null);
+
+  const { addToCart } = useCart(); // ✅ use context
 
   const displayedGames = searchTerm
     ? games.filter((game) =>
@@ -20,6 +24,12 @@ function Products() {
         (game) => game.genre?.toLowerCase() === selectedGenre.toLowerCase()
       )
     : games;
+
+  const handleAddToCart = (game) => {
+    addToCart(game);
+    setMessage(`${game.title} added to cart!`);
+    setTimeout(() => setMessage(null), 3000);
+  };
 
   return (
     <div className="products-layout">
@@ -48,6 +58,8 @@ function Products() {
           className="search-input"
         />
 
+        {message && <p className="cart-success-msg">{message}</p>}
+
         <h2 className="products-title">
           {searchTerm
             ? `Search results for "${searchTerm}"`
@@ -71,6 +83,12 @@ function Products() {
                     <Link to={`/product/${game.id}`} className="btn-secondary">
                       View Details
                     </Link>
+                    <button
+                      className="btn-add"
+                      onClick={() => handleAddToCart(game)}
+                    >
+                      Add to Cart
+                    </button>
                   </div>
                 </div>
               </div>

@@ -71,63 +71,92 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container">
-      <h2>Welcome Back 👋</h2>
-
-      {error && <p className="signup-error">{error}</p>}
-
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-
-        <div className="password-input-wrapper">
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+    <>
+      <div className="cont-auth">
+        <svg
+          id="blob-1"
+          viewBox="0 0 200 200"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill="#ffffff"
+            d="M26.5,-41.4C35.6,-35.4,45.2,-30.2,51.7,-21.9C58.3,-13.5,61.9,-2,54.9,3.9C47.8,9.8,30.1,10.3,20.7,13.8C11.2,17.4,10.2,24.2,7.4,24.9C4.6,25.6,0.1,20.2,-5.3,18.4C-10.6,16.6,-16.9,18.3,-20.1,16.4C-23.3,14.5,-23.5,9,-30.2,0.8C-37,-7.4,-50.2,-18.2,-48.1,-21.6C-46,-25,-28.5,-21.1,-17.9,-26.3C-7.3,-31.6,-3.7,-46,2.5,-50C8.7,-53.9,17.4,-47.3,26.5,-41.4Z"
+            transform="translate(100 100)"
           />
-          <span
-            className="toggle-password-icon"
-            onClick={() => setShowPassword((prev) => !prev)}
-          >
-            {showPassword ? (
-              <MdVisibilityOff size={20} />
-            ) : (
-              <MdVisibility size={20} />
-            )}
-          </span>
+        </svg>{" "}
+        <svg
+          id="blob-2"
+          viewBox="0 0 200 200"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill="#ffffff"
+            d="M26.5,-41.4C35.6,-35.4,45.2,-30.2,51.7,-21.9C58.3,-13.5,61.9,-2,54.9,3.9C47.8,9.8,30.1,10.3,20.7,13.8C11.2,17.4,10.2,24.2,7.4,24.9C4.6,25.6,0.1,20.2,-5.3,18.4C-10.6,16.6,-16.9,18.3,-20.1,16.4C-23.3,14.5,-23.5,9,-30.2,0.8C-37,-7.4,-50.2,-18.2,-48.1,-21.6C-46,-25,-28.5,-21.1,-17.9,-26.3C-7.3,-31.6,-3.7,-46,2.5,-50C8.7,-53.9,17.4,-47.3,26.5,-41.4Z"
+            transform="translate(100 100)"
+          />
+        </svg>
+        <h2 className="heading">
+          If you want to check your Cart and Pay you need to Sign First !
+        </h2>
+        <div className="auth-container">
+          <h2>Welcome Back 👋</h2>
+
+          {error && <p className="signup-error">{error}</p>}
+
+          <form onSubmit={handleLogin}>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <span
+                className="toggle-password-icon"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? (
+                  <MdVisibilityOff size={20} />
+                ) : (
+                  <MdVisibility size={20} />
+                )}
+              </span>
+            </div>
+
+            <p className="forgot-password-container">
+              <a href="/forgot-password" className="forgot-password-link">
+                Forgot password?
+              </a>
+            </p>
+
+            <button type="submit">Login</button>
+          </form>
+
+          <button className="oauth-btn google" onClick={handleGoogleLogin}>
+            <FcGoogle size={22} />
+            Sign in with Google
+          </button>
+
+          <button className="oauth-btn github" onClick={handleGithubLogin}>
+            <FaGithub size={22} />
+            Sign in with GitHub
+          </button>
+
+          <p>
+            Don’t have an account? <a href="/signup">Sign up</a>
+          </p>
         </div>
-
-        <p className="forgot-password-container">
-          <a href="/forgot-password" className="forgot-password-link">
-            Forgot password?
-          </a>
-        </p>
-
-        <button type="submit">Login</button>
-      </form>
-
-      <button className="oauth-btn google" onClick={handleGoogleLogin}>
-        <FcGoogle size={22} />
-        Sign in with Google
-      </button>
-
-      <button className="oauth-btn github" onClick={handleGithubLogin}>
-        <FaGithub size={22} />
-        Sign in with GitHub
-      </button>
-
-      <p>
-        Don’t have an account? <a href="/signup">Sign up</a>
-      </p>
-    </div>
+      </div>
+    </>
   );
 };
 

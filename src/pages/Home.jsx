@@ -40,8 +40,6 @@ function Home() {
           <img src="/images/logo img.jpg" alt="Zonoj Store Logo" />
         </div>
       </section>
-
-      {/* Featured Games Section */}
       <section className="featured-section">
         <h2>Featured Games</h2>
         <div className="container">

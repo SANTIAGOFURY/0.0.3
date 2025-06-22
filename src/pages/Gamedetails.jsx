@@ -19,10 +19,9 @@ function GameDetails() {
   const handleAddToCart = () => {
     addToCart(game);
     setShowMessage(true);
-
     setTimeout(() => {
       setShowMessage(false);
-    }, 3000); // Hide message after 3 seconds
+    }, 3000);
   };
 
   return (
@@ -44,12 +43,37 @@ function GameDetails() {
           <p>
             <strong>Price:</strong> {game.price}
           </p>
-          <p className="game-description">{game.description}</p>
+
+          <div className="game-description">
+            <h3>Description</h3>
+            <p>{game.description.short}</p>
+
+            <h4>System Requirements:</h4>
+            <ul>
+              {game.description.system.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+
+            <h4>Performance Features:</h4>
+            <ul>
+              {game.description.performance.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+
+            <h4>Game Features:</h4>
+            <ul>
+              {game.description.features.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+          </div>
 
           <button className="btn-buy" onClick={handleAddToCart}>
             Add to Cart
           </button>
-          <button onClick={() => navigate(-1)} className="btn-back">
+          <button className="btn-back" onClick={() => navigate(-1)}>
             ⬅ Back
           </button>
 

@@ -31,19 +31,31 @@ const games = [
     cover: "/images/Covers/Cyberpunk 2077.jpeg",
     rating: 4.2,
     genre: "Action",
-    videoUrl: "/videos/Cyberpunk 2077 Trailer.mp4",
-    description: `Cyberpunk 2077 is an open-world action RPG set in the dark future of Night City.
-  You play as V, a customizable mercenary navigating a society obsessed with power, cybernetics, and body mods.
-  Explore vast, detailed city districts filled with gangs, corporations, and underground tech dealers.
-  Engage in intense first-person combat using guns, blades, hacking, and stealth.
-  Your choices shape the story with multiple branching paths and endings.
-  Upgrade your character with cyberware to enhance strength, reflexes, and abilities.
-  Meet iconic characters like Johnny Silverhand, played by Keanu Reeves.
-  Take on gigs, side quests, and narrative-driven missions in a fully immersive world.
-  The game combines cinematic storytelling with deep customization and RPG mechanics.
-  A must-play for fans of sci-fi, futuristic worlds, and rich narrative experiences.`,
+    platform: "PC",
+    releaseYear: "2020",
+    description: {
+      short:
+        "Cyberpunk 2077 is an open-world action RPG set in the futuristic Night City, filled with gangs, tech dealers, and branching storylines.",
+      system: [
+        "OS: Windows 10",
+        "Processor: Intel Core i7-4790 or AMD Ryzen 3 3200G",
+        "Memory: 12 GB RAM",
+        "Graphics: GTX 1060 6GB / GTX 1660 Super / Radeon RX 590",
+        "Storage: 70 GB SSD",
+      ],
+      performance: [
+        "Ray-tracing support with RTX GPUs",
+        "DLSS 2.0 support for higher frame rates",
+        "High-quality textures with realistic lighting",
+      ],
+      features: [
+        "Customizable character (V) with skills and cyberware",
+        "Narrative-driven missions with multiple endings",
+        "Dynamic weather and full day-night cycle",
+        "Iconic characters like Johnny Silverhand",
+      ],
+    },
   },
-
   {
     id: 5,
     title: "Red Dead Redemption 2",
@@ -70,7 +82,7 @@ const games = [
   },
   {
     id: 8,
-    title: "Assassin’s Creed Mirage",
+    title: "Assassin's Creed Mirage",
     price: "$49.99",
     cover: "/images/Covers/AC Mirage.jpeg",
     rating: 4.0,
@@ -120,14 +132,6 @@ const games = [
   },
   {
     id: 14,
-    title: "RDR2",
-    price: "$44.99",
-    cover: "/images/Covers/RDR2.jpeg",
-    rating: 4.7,
-    genre: "Adventure",
-  },
-  {
-    id: 15,
     title: "FC25",
     price: "$69.99",
     cover: "/images/Covers/FC25.jpeg",
@@ -135,7 +139,7 @@ const games = [
     genre: "Sports",
   },
   {
-    id: 16,
+    id: 15,
     title: "FC24",
     price: "$49.99",
     cover: "/images/Covers/FC24.jpeg",
@@ -143,7 +147,7 @@ const games = [
     genre: "Sports",
   },
   {
-    id: 17,
+    id: 16,
     title: "FIFA23",
     price: "$39.99",
     cover: "/images/Covers/FIFA23.jpeg",
@@ -151,7 +155,7 @@ const games = [
     genre: "Sports",
   },
   {
-    id: 18,
+    id: 17,
     title: "VALORANT SKINS ACCOUNT",
     price: "$29.99",
     cover: "/images/Covers/Valorant Skins.jpeg",
@@ -159,7 +163,7 @@ const games = [
     genre: "Shooter",
   },
   {
-    id: 19,
+    id: 18,
     title: "FORTNITE SKINS ACCOUNT",
     price: "$24.99",
     cover: "/images/Covers/Fortnite Skins.jpeg",
@@ -167,7 +171,7 @@ const games = [
     genre: "Shooter",
   },
   {
-    id: 20,
+    id: 19,
     title: "THE LAST OF US PC",
     price: "$59.99",
     cover: "/images/Covers/Last of Us PC.jpeg",
@@ -175,7 +179,7 @@ const games = [
     genre: "Action",
   },
   {
-    id: 21,
+    id: 20,
     title: "THE LAST OF US PART 2 PSN",
     price: "$69.99",
     cover: "/images/Covers/Last of Us Part 2.jpeg",
@@ -183,7 +187,7 @@ const games = [
     genre: "Action",
   },
   {
-    id: 22,
+    id: 21,
     title: "XBOX GAMEPASS",
     price: "$9.99",
     cover: "/images/Covers/Xbox Gamepass.jpeg",
@@ -191,7 +195,7 @@ const games = [
     genre: "Subscription",
   },
   {
-    id: 23,
+    id: 22,
     title: "MINECRAFT",
     price: "$29.99",
     cover: "/images/Covers/Minecraft.jpeg",
@@ -199,7 +203,7 @@ const games = [
     genre: "Sandbox",
   },
   {
-    id: 24,
+    id: 23,
     title: "Clair Obscur: Expedition 33",
     price: "$69.99",
     cover: "/images/Covers/Expedition 33.jpeg",
@@ -207,7 +211,7 @@ const games = [
     genre: "RPG",
   },
   {
-    id: 25,
+    id: 24,
     title: "NBA2K25",
     price: "$69.99",
     cover: "/images/Covers/NBA2K25.jpeg",
@@ -215,7 +219,7 @@ const games = [
     genre: "Sports",
   },
   {
-    id: 26,
+    id: 25,
     title: "Schedule I",
     price: "$29.99",
     cover: "/images/Covers/Schedule I.jpeg",
@@ -223,7 +227,7 @@ const games = [
     genre: "Horror",
   },
   {
-    id: 27,
+    id: 26,
     title: "ELDEN RING ALL DLC",
     price: "$19.99",
     cover: "/images/Covers/Elden Ring DLC.jpeg",
@@ -231,7 +235,7 @@ const games = [
     genre: "RPG",
   },
   {
-    id: 28,
+    id: 27,
     title: "SQUAD",
     price: "$34.99",
     cover: "/images/Covers/Squad.jpeg",
@@ -239,7 +243,7 @@ const games = [
     genre: "Shooter",
   },
   {
-    id: 29,
+    id: 28,
     title: "SONS OF THE FOREST",
     price: "$39.99",
     cover: "/images/Covers/Sons of the Forest.jpeg",
@@ -247,7 +251,7 @@ const games = [
     genre: "Survival",
   },
   {
-    id: 30,
+    id: 29,
     title: "FORZA",
     price: "$59.99",
     cover: "/images/Covers/Forza.jpeg",
@@ -255,7 +259,7 @@ const games = [
     genre: "Racing",
   },
   {
-    id: 31,
+    id: 30,
     title: "NFS",
     price: "$49.99",
     cover: "/images/Covers/NFS.jpeg",
