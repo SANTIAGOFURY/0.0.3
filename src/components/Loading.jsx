@@ -3,8 +3,15 @@ import "../Css/Loading.css";
 
 function Loader() {
   return (
-    <div className="loader-overlay">
-      <div className="spinner"></div>
+    <div className="spinner-cont">
+      <div class="spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
   );
 }

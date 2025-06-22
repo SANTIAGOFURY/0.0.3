@@ -1,6 +1,6 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
-import "../Css/Cart.css"; // Add your cart styles here
+import "../Css/Cart.css";
 import { Link } from "react-router-dom";
 
 function Cart() {
@@ -30,6 +30,9 @@ function Cart() {
                   <h3>{game.title}</h3>
                   {game.rating && <p className="rating">⭐ {game.rating}</p>}
                   <p className="price">Price: {game.price}</p>
+                  <Link to={`/product/${game.id}`} className="btn-detail">
+                    View Details
+                  </Link>
                   <button
                     className="remove-btn "
                     onClick={() => removeFromCart(game.id)}

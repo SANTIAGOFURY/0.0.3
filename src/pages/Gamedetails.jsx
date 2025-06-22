@@ -47,7 +47,6 @@ function GameDetails() {
           <div className="game-description">
             <h3>Description</h3>
             <p>{game.description.short}</p>
-
             <h4>System Requirements:</h4>
             <ul>
               {game.description.system.map((item, index) => (

@@ -1,27 +1,56 @@
 .footer {
-  background-color: #1a1a1a;
-  padding: 2rem 1rem;
+  position: relative;
+  padding: 3rem 2rem 2rem;
+  background: #0e0e0e;
   color: #fff;
-  margin-top: 4rem;
-  font-family: "Segoe UI", sans-serif;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.footer-background-shape {
+  position: absolute;
+  top: -30%;
+  left: -20%;
+  width: 150%;
+  height: 300%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.05) 0%,
+    transparent 80%
+  );
+  animation: pulse 8s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.15;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.3;
+  }
 }
 
 .footer-content {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  flex-wrap: wrap;
+  z-index: 1;
+  position: relative;
 }
 
 .footer-section {
   flex: 1 1 250px;
+  margin: 1rem 0;
 }
 
-.footer-section h4 {
+.footer-section h3 {
+  font-size: 1.3rem;
   margin-bottom: 1rem;
-  color: #6a0dad;
+  color: #facc15;
 }
 
 .footer-section ul {
@@ -34,8 +63,9 @@
 }
 
 .footer-section ul li a {
-  color: #ccc;
+  color: #bbb;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .footer-section ul li a:hover {
@@ -43,42 +73,33 @@
 }
 
 .social-icons a {
-  font-size: 1.5rem;
-  margin-right: 0.75rem;
-  color: #ccc;
-  transition: color 0.3s;
+  font-size: 1.8rem;
+  margin-right: 1rem;
+  color: #facc15;
+  transition: transform 0.3s, color 0.3s;
 }
 
 .social-icons a:hover {
-  color: #6a0dad;
+  transform: scale(1.2);
+  color: #fff;
 }
 
-.footer-note {
-  flex-basis: 100%;
+.footer-bottom {
   text-align: center;
-  margin-top: 1rem;
+  margin-top: 2rem;
+  border-top: 1px solid #333;
+  padding-top: 1rem;
+  font-size: 0.9rem;
+  z-index: 1;
+  position: relative;
 }
 
-.footer-note p {
-  margin: 0.3rem 0;
-  color: #aaa;
-}
-
-.coder-link {
+.footer-bottom a {
   color: #6a0dad;
   font-weight: bold;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
-.coder-link:hover {
-  color: #9f5fff;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .footer-content {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
+.footer-bottom a:hover {
+  color: #fff;
 }

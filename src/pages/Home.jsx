@@ -1,13 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext"; 
 import "../Css/Home.css";
 import games from "../Data/FeatcheredGames";
 import genres from "../Data/Genres";
 
 function Home() {
+  const [message, setMessage] = useState(null);
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (game) => {
+    addToCart(game);
+    setMessage(`${game.title} added to cart!`);
+    setTimeout(() => setMessage(null), 3000);
+  };
+
   return (
     <>
-      {/* Hero Section */}
       <section className="Hero-Section">
         <div className="Hero-container">
           <h4>
@@ -35,25 +44,31 @@ function Home() {
             <button>Visit Our Products Page</button>
           </Link>
         </div>
-
         <div className="Hero-Image">
-          <img src="/images/logo img.jpg" alt="Zonoj Store Logo" />
+          <img src="/public/images/logo img.jpg" alt="Zonoj Store Logo" />
         </div>
       </section>
+      {message && <div className="cart-message">{message}</div>}
       <section className="featured-section">
         <h2>Featured Games</h2>
         <div className="container">
           {games.map((game) => (
             <div key={game.id} className="game-card">
               <div className="image-wrapper">
-                <img src={game.cover} alt={game.title} />
+                <img src={game.cover} alt={game.title} loading="lazy" />
                 <div className="card-content">
                   <h3>{game.title}</h3>
                   <p className="price">{game.price}</p>
                   <p className="rating">⭐ {game.rating}</p>
-                  <Link to={`/products/${game.id}`} className="btn-secondary">
+                  <Link to={`/product/${game.id}`} className="btn-detail">
                     View Details
                   </Link>
+                  <button
+                    className="btn-add"
+                    onClick={() => handleAddToCart(game)}
+                  >
+                    Add to Cart
+                  </button>
                 </div>
               </div>
             </div>

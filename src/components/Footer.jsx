@@ -1,30 +1,24 @@
-import React from "react";
+import { FaDiscord, FaFacebook, FaInstagram, FaTelegram } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaGithub,
-  FaTelegram,
-  FaDiscord,
-} from "react-icons/fa";
 import "../Css/Footer.css";
 
-function Footer() {
+const Footer = () => {
   return (
     <footer className="footer">
+      <div className="footer-background-shape" />
+
       <div className="footer-content">
-        {/* Navigation Links */}
         <div className="footer-section">
-          <h4>Navigation</h4>
+          <h3>Zonoj Store</h3>
           <ul>
             <li>
               <Link to="/">Home</Link>
             </li>
             <li>
-              <Link to="/products">Products</Link>
+              <Link to="/products">Store</Link>
             </li>
             <li>
-              <Link to="/about">About</Link>
+              <Link to="/about">About Us</Link>
             </li>
             <li>
               <Link to="/support">Support</Link>
@@ -32,10 +26,16 @@ function Footer() {
           </ul>
         </div>
 
-        {/* Social Media */}
         <div className="footer-section">
-          <h4>Follow Us</h4>
+          <h3>Follow Us</h3>
           <div className="social-icons">
+            <a
+              href="https://discord.gg/Aw5fhqGM"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FaDiscord />
+            </a>
             <a
               href="https://web.facebook.com/profile.php?id=61577150624166"
               target="_blank"
@@ -50,9 +50,6 @@ function Footer() {
             >
               <FaInstagram />
             </a>
-            <a href="https://github.com/" target="_blank" rel="noreferrer">
-              <FaGithub />
-            </a>
             <a
               href="https://t.me/zonojGamesStore1"
               target="_blank"
@@ -60,36 +57,25 @@ function Footer() {
             >
               <FaTelegram />
             </a>
-            <a
-              href="https://discord.gg/Aw5fhqGM"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <FaDiscord />
-            </a>
           </div>
         </div>
+      </div>
 
-        {/* Footer Note */}
-        <div className="footer-section footer-note">
-          <p>
-            &copy; {new Date().getFullYear()} Zonoj Store. All rights reserved.
-          </p>
-          <p>
-            Made it with ❤️ by{" "}
-            <a
-              href="https://your-link.com"
-              target="_blank"
-              rel="noreferrer"
-              className="coder-link"
-            >
-              The One Eye Coder
-            </a>
-          </p>
-        </div>
+      <div className="footer-bottom">
+        <p>© {new Date().getFullYear()} Zonoj Store. All rights reserved.</p>
+        <p>
+          Made with ❤️ by{" "}
+          <a
+            href="https://github.com/TheOneEyeCoder"
+            target="_blank"
+            rel="noreferrer"
+          >
+            The One Eye Coder
+          </a>
+        </p>
       </div>
     </footer>
   );
-}
+};
 
 export default Footer;

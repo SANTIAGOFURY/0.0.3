@@ -130,7 +130,7 @@ header .head-right .register-btn {
   color: var(--header-text-color);
   border: none;
   font-size: 0.7rem;
-  border-radius: 7px;
+  border-radius: 5px;
   cursor: pointer;
   border: 1px solid var(--header-btn-border-color);
 }
