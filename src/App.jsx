@@ -13,6 +13,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Layout from "./components/Layout";
 import { CartProvider } from "./context/CartContext";
 import Loader from "./components/Loading";
+import AdminGames from "./pages/GameAdmin"; // <-- import here
 
 function App() {
   const location = useLocation();
@@ -39,14 +40,9 @@ function App() {
             <Route path="/products" element={<Products />} />
             <Route path="/product/:id" element={<GameDetails />} />
             <Route path="/support" element={<Support />} />
-            <Route
-              path="/cart"
-              element={
-                // <ProtectedRoute>
-                  <Cart />
-                // </ProtectedRoute>
-              }
-            />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/admin" element={<AdminGames />} />{" "}
+            {/* <-- new admin route */}
           </Route>
         </Routes>
       )}

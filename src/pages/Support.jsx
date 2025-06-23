@@ -59,9 +59,9 @@ function SupportContact() {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
 
-  const SERVICE_ID = "service_a5tjyrp";
-  const TEMPLATE_ID = "template_bjh4drn";
-  const USER_ID = "0cf2iCtF6qcy9Yu3_";
+  const SERVICE_ID = "service_29zg0ml";
+  const TEMPLATE_ID = "template_6uteg9w";
+  const USER_ID = "B6mZ1YFLeh7WCSLqC";
   //
   const handleChange = (e) => {
     setFormData((prev) => ({

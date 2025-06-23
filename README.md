@@ -16,7 +16,13 @@
 
 # stripe API
 
-#
-  // ######################
-  //  Shooter   Games >>> #
-  // ######################
+
+
+
+
+# phone number : 0702777904
+  --- # operator : INWI
+# Email : 
+# password :: ZONOJSTOREcompany2000
+# password for EMAILJS :: zonojstoreusersystem123
+# password for PAYPAL :: V9mi!AL#V3W5iES

@@ -23,6 +23,11 @@ const Footer = () => {
             <li>
               <Link to="/support">Support</Link>
             </li>
+            <li>
+              <Link to="/admin" className="admin-link-btn">
+                Admin Panel
+              </Link>
+            </li>
           </ul>
         </div>
 
