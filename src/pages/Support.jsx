@@ -60,9 +60,9 @@ function SupportContact() {
   const [sending, setSending] = useState(false);
 
   const SERVICE_ID = "service_a5tjyrp";
-  const TEMPLATE_ID = "template_vcapcdr";
-  const USER_ID = "0cf2iCtF6qcy9Yu3_"; 
-    //  
+  const TEMPLATE_ID = "template_bjh4drn";
+  const USER_ID = "0cf2iCtF6qcy9Yu3_";
+  //
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
