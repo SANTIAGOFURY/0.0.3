@@ -1,13 +1,37 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext"; 
+import { useCart } from "../context/CartContext";
 import "../Css/Home.css";
 import games from "../Data/FeatcheredGames";
 import genres from "../Data/Genres";
+import Toast from "../components/Toast";
 
 function Home() {
   const [message, setMessage] = useState(null);
   const { addToCart } = useCart();
+
+  const reasons = [
+    {
+      icon: "🛡️",
+      title: "Safe & Secure",
+      desc: "All transactions are encrypted to keep your data safe.",
+    },
+    {
+      icon: "⚡",
+      title: "Instant Delivery",
+      desc: "Your game keys are delivered immediately after purchase.",
+    },
+    {
+      icon: "💰",
+      title: "Affordable Prices",
+      desc: "We offer competitive pricing on all the latest titles.",
+    },
+    {
+      icon: "🎧",
+      title: "24/7 Support",
+      desc: "Get help anytime with our responsive support team.",
+    },
+  ];
 
   const handleAddToCart = (game) => {
     addToCart(game);
@@ -17,6 +41,7 @@ function Home() {
 
   return (
     <>
+      {/* Hero Section */}
       <section className="Hero-Section">
         <div className="Hero-container">
           <h4>
@@ -48,7 +73,8 @@ function Home() {
           <img src="/public/images/logo img.jpg" alt="Zonoj Store Logo" />
         </div>
       </section>
-      {message && <div className="cart-message">{message}</div>}
+
+      {/* Featured Games Section */}
       <section className="featured-section">
         <h2>Featured Games</h2>
         <div className="container">
@@ -75,6 +101,8 @@ function Home() {
           ))}
         </div>
       </section>
+
+      {/* Genres Section */}
       <section className="Home-genres">
         <h2>Explore by Genre</h2>
         <div className="genres-container">
@@ -90,6 +118,23 @@ function Home() {
           ))}
         </div>
       </section>
+
+      {/* Why Choose Us Section */}
+      <section className="why-choose-us">
+        <h2>💡 Why Choose ZonoJ Store?</h2>
+        <div className="reasons">
+          {reasons.map((r, i) => (
+            <div className="reason-card" key={i}>
+              <span className="icon">{r.icon}</span>
+              <h3>{r.title}</h3>
+              <p>{r.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Toast Notification */}
+      <Toast message={message} visible={!!message} />
     </>
   );
 }

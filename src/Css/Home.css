@@ -464,3 +464,136 @@
     padding: 1rem;
   }
 }
+.why-choose-us {
+  padding: 4rem 1.5rem;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  text-align: center;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.why-choose-us::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 300%;
+  height: 300%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.05) 10%,
+    transparent 70%
+  );
+  animation: floatGlow 10s linear infinite;
+  z-index: 0;
+}
+@keyframes floatGlow {
+  0% {
+    transform: translate(0%, 0%);
+  }
+  50% {
+    transform: translate(-10%, -10%);
+  }
+  100% {
+    transform: translate(0%, 0%);
+  }
+}
+
+.why-choose-us h2 {
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  color: #a29bfe;
+  font-weight: 700;
+  z-index: 2;
+  position: relative;
+  line-height: 1.4;
+}
+
+.why-choose-us .reasons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  z-index: 2;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.why-choose-us .reasons .reason-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 2rem;
+  transition: transform 0.3s ease, border-color 0.3s;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+.why-choose-us .reasons .reason-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: #a29bfe;
+}
+
+.why-choose-us .icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #a29bfe;
+  text-shadow: 0 0 10px #a29bfe;
+}
+
+.why-choose-us .reason-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.6rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.why-choose-us .reason-card p {
+  font-size: 0.95rem;
+  color: #dcdde1;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .why-choose-us {
+    padding: 3rem 1rem;
+  }
+
+  .why-choose-us h2 {
+    font-size: 1.8rem;
+  }
+
+  .why-choose-us .reasons .reason-card {
+    padding: 1.5rem;
+  }
+
+  .why-choose-us .icon {
+    font-size: 2.5rem;
+  }
+
+  .why-choose-us .reason-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .why-choose-us .reason-card p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .why-choose-us .reasons {
+    grid-template-columns: 1fr;
+  }
+
+  .why-choose-us h2 {
+    font-size: 1.5rem;
+  }
+
+  .why-choose-us .reasons .icon {
+    font-size: 2rem;
+  }
+}

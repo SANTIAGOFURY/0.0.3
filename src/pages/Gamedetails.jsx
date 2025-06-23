@@ -3,12 +3,13 @@ import { useState } from "react";
 import games from "../Data/games";
 import "../Css/GameDetails.css";
 import { useCart } from "../context/CartContext";
+import Toast from "../components/Toast"; // ✅ Import Toast
 
 function GameDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState(null); // ✅ Use message state
 
   const game = games.find((g) => g.id.toString() === id);
 
@@ -18,10 +19,8 @@ function GameDetails() {
 
   const handleAddToCart = () => {
     addToCart(game);
-    setShowMessage(true);
-    setTimeout(() => {
-      setShowMessage(false);
-    }, 3000);
+    setMessage(`${game.title} added to cart!`);
+    setTimeout(() => setMessage(null), 3000);
   };
 
   return (
@@ -75,12 +74,11 @@ function GameDetails() {
           <button className="btn-back" onClick={() => navigate(-1)}>
             ⬅ Back
           </button>
-
-          {showMessage && (
-            <div className="add-cart-message">Game added to cart!</div>
-          )}
         </div>
       </div>
+
+      {/* ✅ Toast Message */}
+      <Toast message={message} visible={!!message} />
     </div>
   );
 }

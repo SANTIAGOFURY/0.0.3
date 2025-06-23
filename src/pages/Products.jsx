@@ -3,7 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import games from "../Data/games";
 import genres from "../Data/Genres";
 import "../Css/Products.css";
-import { useCart } from "../context/CartContext"; // ✅ import useCart
+import { useCart } from "../context/CartContext";
+import Toast from "../components/Toast";
 
 function Products() {
   const location = useLocation();
@@ -12,8 +13,7 @@ function Products() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [message, setMessage] = useState(null);
-
-  const { addToCart } = useCart(); // ✅ use context
+  const { addToCart } = useCart();
 
   const displayedGames = searchTerm
     ? games.filter((game) =>
@@ -58,8 +58,6 @@ function Products() {
           className="search-input"
         />
 
-        {message && <p className="cart-success-msg">{message}</p>}
-
         <h2 className="products-title">
           {searchTerm
             ? `Search results for "${searchTerm}"`
@@ -96,6 +94,9 @@ function Products() {
           </div>
         )}
       </div>
+
+      {/* Toast Message */}
+      <Toast message={message} visible={!!message} />
     </div>
   );
 }

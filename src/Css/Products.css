@@ -309,7 +309,7 @@
   border: 3px solid var(--header-btn-border-color);
   position: absolute;
   left: 50%;
-  top: 202%;
+  top: 188%;
   transform: translateX(-50%);
   font-size: 0.7rem;
   display: flex;

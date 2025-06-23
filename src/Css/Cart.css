@@ -1,5 +1,6 @@
 .cart-section {
   width: 100vw;
+  min-height: 90vh;
   padding: 1rem 6rem;
   margin-bottom: 0.4rem;
   text-align: center;
@@ -7,33 +8,61 @@
   overflow: hidden;
   z-index: 1;
 }
-.empty-msj button {
-  width: 10rem;
-  height: 2.5rem;
-  border: none;
-  border-radius: 9px;
-  cursor: pointer;
-  color: white;
-  background-color: var(--home-btn-bg);
-}
-.empty-msj button:hover {
-  background-color: rgb(134, 116, 116);
-  transform: scale(1.1);
+.empty-msj {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  min-height: 90vh;
+  padding: 2rem;
+  background: #1a1a2e;
+  color: #ffffff;
+  animation: fadeIn 0.4s ease-in-out;
 }
 
-.empty-msj {
-  color: red;
-  font-size: 1.2rem;
-  width: 30rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  height: 5rem;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+.empty-msj .empty {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #f8f9fa;
 }
+
+.empty-btn {
+  background-color: #00cec9;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 206, 201, 0.3);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.empty-btn:hover {
+  background-color: #00b3ad;
+  transform: scale(1.05);
+}
+
+.empty-btn:active {
+  transform: scale(0.98);
+  background-color: #009e97;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .cart-section::before {
   content: "";
   position: absolute;
@@ -135,7 +164,7 @@
   border: 3px solid var(--header-btn-border-color);
   position: absolute;
   left: 50%;
-  top: 202%;
+  top: 200%;
   transform: translateX(-50%);
   font-size: 0.7rem;
   display: flex;
@@ -149,19 +178,20 @@
 .card-cart-content .remove-btn:active {
   border-color: var(--header-btn-active-color);
 }
-@media (max-width: 1200px) {
+@media (max-width: 1500px) {
+  .card-cart-content .remove-btn {
+    top: 188%;
+  }
   .game-cart-card {
     flex: 0 0 calc(25% - 1.6rem);
   }
 }
-
 @media (max-width: 992px) {
   .game-cart-card {
     min-width: 15rem;
     flex: 0 0 calc(33.33% - 1.6rem);
   }
 }
-
 @media (max-width: 768px) {
   .game-cart-card {
     min-width: 15rem;
