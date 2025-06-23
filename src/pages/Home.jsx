@@ -70,7 +70,7 @@ function Home() {
           </Link>
         </div>
         <div className="Hero-Image">
-          <img src="./public/images/logo img.jpg" alt="Zonoj Store Logo" />
+          <img src="/images/logo img.jpg" alt="Zonoj Store Logo" />
         </div>
       </section>
 
