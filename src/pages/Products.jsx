@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import games from "../Data/games";
+// import games from "../Data/games"; // no longer used directly
 import genres from "../Data/Genres";
 import "../Css/Products.css";
 import { useCart } from "../context/CartContext";
@@ -11,10 +11,29 @@ function Products() {
   const queryParams = new URLSearchParams(location.search);
   const selectedGenre = queryParams.get("genre");
 
+  const [games, setGames] = useState(() => {
+    const saved = localStorage.getItem("adminGames");
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
   const [message, setMessage] = useState(null);
   const { addToCart } = useCart();
 
+  // Update games if localStorage changes (cross-tab or manual updates)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem("adminGames");
+      setGames(saved ? JSON.parse(saved) : []);
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    // Optional: also update when location changes (e.g., switching genres)
+    // Could be helpful if localStorage is updated elsewhere
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  // Filter games based on search and genre
   const displayedGames = searchTerm
     ? games.filter((game) =>
         game.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -94,8 +113,6 @@ function Products() {
           </div>
         )}
       </div>
-
-      {/* Toast Message */}
       <Toast message={message} visible={!!message} />
     </div>
   );
