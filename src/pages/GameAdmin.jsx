@@ -17,7 +17,7 @@ function AdminGames() {
   const [loading, setLoading] = useState(true);
 
   const [form, setForm] = useState({
-    id: null, // Firestore doc id
+    id: null,
     title: "",
     price: "",
     cover: "",
@@ -38,7 +38,7 @@ function AdminGames() {
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
 
-  // Load all games from Firestore
+  // Fetch all games from Firestore
   const fetchGames = async () => {
     setLoading(true);
     try {
@@ -56,25 +56,9 @@ function AdminGames() {
   };
 
   useEffect(() => {
-    const loadGames = async () => {
-      await fetchGames();
-    };
-    loadGames();
+    fetchGames();
   }, []);
-  useEffect(() => {
-    const testFetch = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "games"));
-        console.log(
-          "Games from Firestore:",
-          snapshot.docs.map((doc) => doc.data())
-        );
-      } catch (err) {
-        console.error("🔥 Firestore Error:", err.message);
-      }
-    };
-    testFetch();
-  }, []);
+
   // Upload initial games if collection is empty
   const uploadInitialGames = async () => {
     try {
@@ -152,12 +136,10 @@ function AdminGames() {
 
     try {
       if (editingId) {
-        // Update existing game
         const gameDoc = doc(db, "games", editingId);
         await updateDoc(gameDoc, newGame);
         alert("Game updated successfully");
       } else {
-        // Add new game
         await addDoc(gamesCollectionRef, newGame);
         alert("Game added successfully");
       }
@@ -256,7 +238,6 @@ function AdminGames() {
           {editingId ? "Edit Game" : "Add New Game"}
         </h2>
 
-        {/** Form inputs */}
         {[
           {
             label: "Title *",
@@ -341,7 +322,6 @@ function AdminGames() {
           )
         )}
 
-        {/** Textareas for descriptions */}
         {[
           {
             label: "Description - Short",
@@ -409,7 +389,7 @@ function AdminGames() {
               padding: "0.6rem 1.2rem",
               border: "none",
               borderRadius: "5px",
-              fontWeight: 600,
+              fontWeight: "600",
               cursor: "pointer",
               transition: "background-color 0.3s ease",
             }}
@@ -427,7 +407,7 @@ function AdminGames() {
                 padding: "0.6rem 1.2rem",
                 border: "none",
                 borderRadius: "5px",
-                fontWeight: 600,
+                fontWeight: "600",
                 cursor: "pointer",
                 transition: "background-color 0.3s ease",
               }}
@@ -624,7 +604,7 @@ function AdminGames() {
                       style={{
                         flex: 1,
                         padding: "0.4rem 0",
-                        fontWeight: 600,
+                        fontWeight: "600",
                         borderRadius: "5px",
                         border: "none",
                         cursor: "pointer",
@@ -646,7 +626,7 @@ function AdminGames() {
                       style={{
                         flex: 1,
                         padding: "0.4rem 0",
-                        fontWeight: 600,
+                        fontWeight: "600",
                         borderRadius: "5px",
                         border: "none",
                         cursor: "pointer",
