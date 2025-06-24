@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from "react";
 import {
   collection,
-  onSnapshot,
+  getDocs,
   addDoc,
-  doc,
   updateDoc,
   deleteDoc,
-  query,
-  orderBy,
+  doc,
 } from "firebase/firestore";
-import { db } from "../firebase"; // Adjust the path to your firebase.js file
+import { db } from "../firebase";
+import initialGames from "../Data/games";
 
 function AdminGames() {
+  const gamesCollectionRef = collection(db, "games");
+
   const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [form, setForm] = useState({
+    id: null, // Firestore doc id
     title: "",
     price: "",
     cover: "",
@@ -26,6 +30,7 @@ function AdminGames() {
     descriptionPerformance: "",
     descriptionFeatures: "",
   });
+
   const [editingId, setEditingId] = useState(null);
 
   // Filters
@@ -33,28 +38,57 @@ function AdminGames() {
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
 
-  // Load games from Firestore with realtime updates
-  useEffect(() => {
-    const q = query(collection(db, "games"), orderBy("title"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+  // Load all games from Firestore
+  const fetchGames = async () => {
+    setLoading(true);
+    try {
+      const snapshot = await getDocs(gamesCollectionRef);
       const gamesData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
       setGames(gamesData);
-    });
-    return unsubscribe;
+    } catch (error) {
+      console.error("Error fetching games:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const loadGames = async () => {
+      await fetchGames();
+    };
+    loadGames();
   }, []);
 
-  // Handle form input changes
+  // Upload initial games if collection is empty
+  const uploadInitialGames = async () => {
+    try {
+      const snapshot = await getDocs(gamesCollectionRef);
+      if (snapshot.empty) {
+        for (const game of initialGames) {
+          await addDoc(gamesCollectionRef, game);
+        }
+        alert("Initial games uploaded!");
+        fetchGames();
+      } else {
+        alert("Games collection is not empty!");
+      }
+    } catch (error) {
+      console.error("Error uploading initial games:", error);
+      alert("Failed to upload initial games.");
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
   };
 
-  // Reset form to empty and clear editing
   const resetForm = () => {
     setForm({
+      id: null,
       title: "",
       price: "",
       cover: "",
@@ -70,7 +104,6 @@ function AdminGames() {
     setEditingId(null);
   };
 
-  // Add or update game in Firestore
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -106,28 +139,34 @@ function AdminGames() {
 
     try {
       if (editingId) {
+        // Update existing game
         const gameDoc = doc(db, "games", editingId);
         await updateDoc(gameDoc, newGame);
+        alert("Game updated successfully");
       } else {
-        await addDoc(collection(db, "games"), newGame);
+        // Add new game
+        await addDoc(gamesCollectionRef, newGame);
+        alert("Game added successfully");
       }
+      fetchGames();
       resetForm();
     } catch (error) {
-      alert("Error saving game: " + error.message);
+      console.error("Error saving game:", error);
+      alert("Failed to save game.");
     }
   };
 
-  // Prepare form for editing a game
   const handleEdit = (game) => {
     setEditingId(game.id);
     setForm({
-      title: game.title,
-      price: game.price,
-      cover: game.cover,
-      rating: game.rating,
-      genre: game.genre,
-      platform: game.platform,
-      releaseYear: game.releaseYear,
+      id: game.id,
+      title: game.title || "",
+      price: game.price || "",
+      cover: game.cover || "",
+      rating: game.rating || "",
+      genre: game.genre || "",
+      platform: game.platform || "",
+      releaseYear: game.releaseYear || "",
       descriptionShort: game.description?.short || "",
       descriptionSystem: (game.description?.system || []).join(", "),
       descriptionPerformance: (game.description?.performance || []).join(", "),
@@ -136,19 +175,21 @@ function AdminGames() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Delete game from Firestore
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this game?")) {
-      try {
-        await deleteDoc(doc(db, "games", id));
-        if (editingId === id) resetForm();
-      } catch (error) {
-        alert("Error deleting game: " + error.message);
-      }
+    if (!window.confirm("Are you sure you want to delete this game?")) return;
+    try {
+      const gameDoc = doc(db, "games", id);
+      await deleteDoc(gameDoc);
+      alert("Game deleted successfully");
+      if (editingId === id) resetForm();
+      fetchGames();
+    } catch (error) {
+      console.error("Error deleting game:", error);
+      alert("Failed to delete game.");
     }
   };
 
-  // Filter games list
+  // Filter games
   const filteredGames = games.filter((game) => {
     const titleMatch = game.title
       .toLowerCase()
@@ -163,225 +204,201 @@ function AdminGames() {
   return (
     <div
       className="admin-container"
-      style={{ maxWidth: 1200, margin: "2rem auto", padding: "1rem" }}
+      style={{ maxWidth: "1000px", margin: "2rem auto", padding: "1rem" }}
     >
-      <h1 style={{ textAlign: "center" }}>Admin: Manage Games</h1>
+      <h1 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+        Admin: Manage Games
+      </h1>
+
+      <button
+        onClick={uploadInitialGames}
+        style={{
+          marginBottom: "1.5rem",
+          padding: "0.6rem 1.2rem",
+          fontWeight: "600",
+          backgroundColor: "#4a90e2",
+          color: "#fff",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Upload Initial Games from File
+      </button>
 
       <form
+        className="admin-form"
         onSubmit={handleSubmit}
         style={{
           background: "#f9f9f9",
           padding: "1.5rem",
-          borderRadius: 8,
-          boxShadow: "0 0 12px rgba(0,0,0,0.1)",
+          borderRadius: "8px",
           marginBottom: "2rem",
+          boxShadow: "0 0 12px rgba(0,0,0,0.1)",
         }}
       >
-        <h2>{editingId ? "Edit Game" : "Add New Game"}</h2>
+        <h2
+          style={{ marginBottom: "1rem", color: "#333", textAlign: "center" }}
+        >
+          {editingId ? "Edit Game" : "Add New Game"}
+        </h2>
 
-        {/* Title */}
-        <div className="form-group" style={{ marginBottom: "1rem" }}>
-          <label>Title *</label>
-          <input
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            required
-            placeholder="Game title"
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              fontSize: "1rem",
-            }}
-          />
-        </div>
+        {/** Form inputs */}
+        {[
+          {
+            label: "Title *",
+            name: "title",
+            type: "text",
+            placeholder: "Game title",
+            required: true,
+          },
+          {
+            label: "Price",
+            name: "price",
+            type: "text",
+            placeholder: 'e.g. "$39.99"',
+          },
+          {
+            label: "Cover Image URL",
+            name: "cover",
+            type: "text",
+            placeholder: "e.g. /images/Covers/game.jpg",
+          },
+          {
+            label: "Rating",
+            name: "rating",
+            type: "number",
+            min: 0,
+            max: 5,
+            step: 0.1,
+            placeholder: "0 to 5",
+          },
+          {
+            label: "Genre",
+            name: "genre",
+            type: "text",
+            placeholder: "Action, RPG, etc.",
+          },
+          {
+            label: "Platform",
+            name: "platform",
+            type: "text",
+            placeholder: "PC, PS4, Xbox, etc.",
+          },
+          {
+            label: "Release Year",
+            name: "releaseYear",
+            type: "text",
+            placeholder: "e.g. 2013",
+          },
+        ].map(
+          ({ label, name, type, placeholder, min, max, step, required }) => (
+            <div key={name} style={{ marginBottom: "1rem" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontWeight: 600,
+                  marginBottom: "0.3rem",
+                  color: "#555",
+                }}
+              >
+                {label}
+              </label>
+              <input
+                name={name}
+                type={type}
+                min={min}
+                max={max}
+                step={step}
+                value={form[name]}
+                onChange={handleChange}
+                placeholder={placeholder}
+                required={required}
+                style={{
+                  width: "100%",
+                  padding: "0.4rem 0.6rem",
+                  borderRadius: "4px",
+                  border: "1px solid #ccc",
+                  fontSize: "1rem",
+                  fontFamily: "inherit",
+                  transition: "border-color 0.3s ease",
+                }}
+              />
+            </div>
+          )
+        )}
 
-        {/* Price */}
-        <div className="form-group" style={{ marginBottom: "1rem" }}>
-          <label>Price</label>
-          <input
-            name="price"
-            value={form.price}
-            onChange={handleChange}
-            placeholder='e.g. "$39.99"'
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              fontSize: "1rem",
-            }}
-          />
-        </div>
+        {/** Textareas for descriptions */}
+        {[
+          {
+            label: "Description - Short",
+            name: "descriptionShort",
+            placeholder: "Brief summary",
+            rows: 2,
+          },
+          {
+            label: "Description - System Requirements (comma separated)",
+            name: "descriptionSystem",
+            placeholder: "e.g. OS: Windows 10, Processor: Intel Core i7",
+            rows: 2,
+          },
+          {
+            label: "Description - Performance Features (comma separated)",
+            name: "descriptionPerformance",
+            placeholder: "e.g. High fidelity graphics, Improved AI",
+            rows: 2,
+          },
+          {
+            label: "Description - Game Features (comma separated)",
+            name: "descriptionFeatures",
+            placeholder: "e.g. Stealth and combat mechanics, Memorable story",
+            rows: 2,
+          },
+        ].map(({ label, name, placeholder, rows }) => (
+          <div key={name} style={{ marginBottom: "1rem" }}>
+            <label
+              style={{
+                display: "block",
+                fontWeight: 600,
+                marginBottom: "0.3rem",
+                color: "#555",
+              }}
+            >
+              {label}
+            </label>
+            <textarea
+              name={name}
+              value={form[name]}
+              onChange={handleChange}
+              placeholder={placeholder}
+              rows={rows}
+              style={{
+                width: "100%",
+                padding: "0.4rem 0.6rem",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+                fontSize: "1rem",
+                fontFamily: "inherit",
+                transition: "border-color 0.3s ease",
+              }}
+            />
+          </div>
+        ))}
 
-        {/* Cover */}
-        <div className="form-group" style={{ marginBottom: "1rem" }}>
-          <label>Cover Image URL</label>
-          <input
-            name="cover"
-            value={form.cover}
-            onChange={handleChange}
-            placeholder="e.g. /images/Covers/game.jpg"
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              fontSize: "1rem",
-            }}
-          />
-        </div>
-
-        {/* Rating */}
-        <div className="form-group" style={{ marginBottom: "1rem" }}>
-          <label>Rating</label>
-          <input
-            name="rating"
-            type="number"
-            min="0"
-            max="5"
-            step="0.1"
-            value={form.rating}
-            onChange={handleChange}
-            placeholder="0 to 5"
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              fontSize: "1rem",
-            }}
-          />
-        </div>
-
-        {/* Genre */}
-        <div className="form-group" style={{ marginBottom: "1rem" }}>
-          <label>Genre</label>
-          <input
-            name="genre"
-            value={form.genre}
-            onChange={handleChange}
-            placeholder="Action, RPG, etc."
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              fontSize: "1rem",
-            }}
-          />
-        </div>
-
-        {/* Platform */}
-        <div className="form-group" style={{ marginBottom: "1rem" }}>
-          <label>Platform</label>
-          <input
-            name="platform"
-            value={form.platform}
-            onChange={handleChange}
-            placeholder="PC, PS4, Xbox, etc."
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              fontSize: "1rem",
-            }}
-          />
-        </div>
-
-        {/* Release Year */}
-        <div className="form-group" style={{ marginBottom: "1rem" }}>
-          <label>Release Year</label>
-          <input
-            name="releaseYear"
-            value={form.releaseYear}
-            onChange={handleChange}
-            placeholder="e.g. 2013"
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              fontSize: "1rem",
-            }}
-          />
-        </div>
-
-        {/* Description Short */}
-        <div className="form-group" style={{ marginBottom: "1rem" }}>
-          <label>Description - Short</label>
-          <textarea
-            name="descriptionShort"
-            value={form.descriptionShort}
-            onChange={handleChange}
-            placeholder="Brief summary"
-            rows={2}
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              fontSize: "1rem",
-              resize: "vertical",
-            }}
-          />
-        </div>
-
-        {/* Description System */}
-        <div className="form-group" style={{ marginBottom: "1rem" }}>
-          <label>Description - System Requirements (comma separated)</label>
-          <textarea
-            name="descriptionSystem"
-            value={form.descriptionSystem}
-            onChange={handleChange}
-            placeholder="e.g. OS: Windows 10, Processor: Intel Core i7"
-            rows={2}
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              fontSize: "1rem",
-              resize: "vertical",
-            }}
-          />
-        </div>
-
-        {/* Description Performance */}
-        <div className="form-group" style={{ marginBottom: "1rem" }}>
-          <label>Description - Performance Features (comma separated)</label>
-          <textarea
-            name="descriptionPerformance"
-            value={form.descriptionPerformance}
-            onChange={handleChange}
-            placeholder="e.g. High fidelity graphics, Improved AI"
-            rows={2}
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              fontSize: "1rem",
-              resize: "vertical",
-            }}
-          />
-        </div>
-
-        {/* Description Features */}
-        <div className="form-group" style={{ marginBottom: "1rem" }}>
-          <label>Description - Game Features (comma separated)</label>
-          <textarea
-            name="descriptionFeatures"
-            value={form.descriptionFeatures}
-            onChange={handleChange}
-            placeholder="e.g. Stealth and combat mechanics, Memorable story"
-            rows={2}
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              fontSize: "1rem",
-              resize: "vertical",
-            }}
-          />
-        </div>
-
-        {/* Buttons */}
         <div
-          style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}
+          style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
         >
           <button
             type="submit"
             style={{
-              padding: "0.6rem 1.2rem",
               backgroundColor: "#4a90e2",
-              color: "white",
+              color: "#fff",
+              padding: "0.6rem 1.2rem",
               border: "none",
-              borderRadius: 5,
+              borderRadius: "5px",
               fontWeight: 600,
               cursor: "pointer",
+              transition: "background-color 0.3s ease",
             }}
           >
             {editingId ? "Save Changes" : "Add Game"}
@@ -392,13 +409,14 @@ function AdminGames() {
               type="button"
               onClick={resetForm}
               style={{
-                padding: "0.6rem 1.2rem",
                 backgroundColor: "#ccc",
                 color: "#333",
+                padding: "0.6rem 1.2rem",
                 border: "none",
-                borderRadius: 5,
+                borderRadius: "5px",
                 fontWeight: 600,
                 cursor: "pointer",
+                transition: "background-color 0.3s ease",
               }}
             >
               Cancel
@@ -407,14 +425,19 @@ function AdminGames() {
         </div>
       </form>
 
+      <hr style={{ margin: "2rem 0" }} />
+
       {/* Filters */}
       <section style={{ marginBottom: "1rem" }}>
-        <h2>Filter Games</h2>
+        <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>
+          Filter Games
+        </h2>
         <div
           style={{
             display: "flex",
             gap: "1rem",
             flexWrap: "wrap",
+            justifyContent: "center",
             marginBottom: "1rem",
           }}
         >
@@ -424,9 +447,10 @@ function AdminGames() {
             value={filterTitle}
             onChange={(e) => setFilterTitle(e.target.value)}
             style={{
-              flex: "1",
-              minWidth: 150,
-              padding: "0.4rem 0.6rem",
+              padding: "0.5rem",
+              flex: "1 1 200px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
               fontSize: "1rem",
             }}
           />
@@ -436,9 +460,10 @@ function AdminGames() {
             value={filterId}
             onChange={(e) => setFilterId(e.target.value)}
             style={{
-              flex: "1",
-              minWidth: 150,
-              padding: "0.4rem 0.6rem",
+              padding: "0.5rem",
+              flex: "1 1 200px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
               fontSize: "1rem",
             }}
           />
@@ -448,9 +473,10 @@ function AdminGames() {
             value={filterGenre}
             onChange={(e) => setFilterGenre(e.target.value)}
             style={{
-              flex: "1",
-              minWidth: 150,
-              padding: "0.4rem 0.6rem",
+              padding: "0.5rem",
+              flex: "1 1 200px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
               fontSize: "1rem",
             }}
           />
@@ -459,9 +485,15 @@ function AdminGames() {
 
       {/* Games List */}
       <section>
-        <h2>Existing Games</h2>
-        {filteredGames.length === 0 ? (
-          <p>No games found matching filters.</p>
+        <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>
+          Existing Games
+        </h2>
+        {loading ? (
+          <p style={{ textAlign: "center" }}>Loading games...</p>
+        ) : filteredGames.length === 0 ? (
+          <p style={{ textAlign: "center" }}>
+            No games found matching filters.
+          </p>
         ) : (
           <div
             style={{
@@ -474,19 +506,20 @@ function AdminGames() {
               <div
                 key={game.id}
                 style={{
-                  background: "white",
-                  borderRadius: 10,
+                  backgroundColor: "white",
+                  borderRadius: "10px",
                   boxShadow: "0 3px 8px rgba(0,0,0,0.12)",
+                  overflow: "hidden",
                   display: "flex",
                   flexDirection: "column",
                   transition: "transform 0.3s ease",
                 }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.03)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.03)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
               >
                 <img
                   src={game.cover || "/images/default-cover.png"}
@@ -494,7 +527,7 @@ function AdminGames() {
                   loading="lazy"
                   style={{
                     width: "100%",
-                    height: 140,
+                    height: "140px",
                     objectFit: "cover",
                     objectPosition: "center",
                   }}
@@ -579,7 +612,7 @@ function AdminGames() {
                         flex: 1,
                         padding: "0.4rem 0",
                         fontWeight: 600,
-                        borderRadius: 5,
+                        borderRadius: "5px",
                         border: "none",
                         cursor: "pointer",
                         color: "white",
@@ -601,7 +634,7 @@ function AdminGames() {
                         flex: 1,
                         padding: "0.4rem 0",
                         fontWeight: 600,
-                        borderRadius: 5,
+                        borderRadius: "5px",
                         border: "none",
                         cursor: "pointer",
                         color: "white",

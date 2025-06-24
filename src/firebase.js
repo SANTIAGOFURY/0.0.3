@@ -6,7 +6,7 @@ import {
   GoogleAuthProvider,
   GithubAuthProvider,
 } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"; 
+import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyBUx-YhQlJqJ2e5RRklBpPsdM2RBaQH-Ek",
   authDomain: "zonojstore.firebaseapp.com",
@@ -18,7 +18,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app); 
+const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence).catch((error) => {
   console.error("Failed to set persistence:", error);
 });
