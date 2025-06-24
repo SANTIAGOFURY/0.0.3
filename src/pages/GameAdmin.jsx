@@ -7,10 +7,12 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../firebase";
 
 function AdminGames() {
   const gamesCollectionRef = collection(db, "games");
+  const storage = getStorage();
 
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,6 +65,23 @@ function AdminGames() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle file upload for cover image
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const storageRef = ref(storage, `game-covers/${file.name}_${Date.now()}`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+      setForm((prev) => ({ ...prev, cover: downloadURL }));
+      alert("Image uploaded successfully!");
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Failed to upload image: " + error.message);
+    }
   };
 
   // Reset form to default empty values
@@ -160,7 +179,6 @@ function AdminGames() {
     if (!window.confirm("Are you sure you want to delete this game?")) return;
 
     try {
-      console.log("Deleting game with doc id:", id);
       const gameDoc = doc(db, "games", id);
       await deleteDoc(gameDoc);
       alert("Game deleted successfully");
@@ -234,7 +252,7 @@ function AdminGames() {
             label: "Cover Image URL",
             name: "cover",
             type: "text",
-            placeholder: "e.g. /images/Covers/game.jpg",
+            placeholder: "e.g. https://your-image-url.com/game.jpg",
           },
           {
             label: "Rating",
@@ -299,6 +317,49 @@ function AdminGames() {
             </div>
           )
         )}
+
+        {/* Upload cover image file */}
+        <div style={{ marginBottom: "1rem" }}>
+          <label
+            style={{
+              display: "block",
+              fontWeight: 600,
+              marginBottom: 4,
+              color: "#555",
+            }}
+          >
+            Upload Cover Image
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            style={{
+              width: "100%",
+              padding: "0.4rem 0.6rem",
+              borderRadius: 4,
+              border: "1px solid #ccc",
+              fontSize: 16,
+              fontFamily: "inherit",
+              transition: "border-color 0.3s ease",
+            }}
+          />
+          {/* Preview */}
+          {form.cover && (
+            <img
+              src={form.cover}
+              alt="Cover preview"
+              style={{
+                width: "100%",
+                maxHeight: 200,
+                objectFit: "contain",
+                marginTop: "0.5rem",
+                borderRadius: 6,
+                border: "1px solid #ddd",
+              }}
+            />
+          )}
+        </div>
 
         {/* Textareas for descriptions */}
         {[
