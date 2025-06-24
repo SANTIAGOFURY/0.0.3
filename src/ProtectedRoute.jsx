@@ -3,9 +3,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase";
 
 const ADMIN_EMAILS = [
-  "alphawork404@gmail.com", 
   "alphawar404@gmail.com",
-  "zonojstore@gmail.com",
+  "admin2@example.com",
+  "admin3@example.com",
 ];
 
 const ProtectedRoute = ({ children, requireAdmin = false }) => {

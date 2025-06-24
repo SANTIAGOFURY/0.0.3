@@ -13,7 +13,7 @@ import ResetPassword from "./pages/ResetPassword";
 import AdminGames from "./pages/GameAdmin";
 import Checkout from "./pages/Checkout";
 
-import ProtectedRoute from "./ProtectedRoute"; // handles auth logic
+import ProtectedRoute from "./ProtectedRoute";
 import Layout from "./components/Layout";
 import { CartProvider } from "./context/CartContext";
 import Loader from "./components/Loading";
@@ -43,11 +43,14 @@ function App() {
             <Route path="/products" element={<Products />} />
             <Route path="/product/:id" element={<GameDetails />} />
             <Route path="/support" element={<Support />} />
-
-            {/* Public Admin Page (you can wrap with admin check later) */}
-            <Route path="/admin" element={<AdminGames />} />
-
-            {/* Protected routes - must be signed in */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AdminGames />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/cart"
               element={
