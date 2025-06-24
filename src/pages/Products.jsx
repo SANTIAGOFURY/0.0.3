@@ -1,39 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-// import games from "../Data/games"; // no longer used directly
 import genres from "../Data/Genres";
 import "../Css/Products.css";
 import { useCart } from "../context/CartContext";
 import Toast from "../components/Toast";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
 function Products() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const selectedGenre = queryParams.get("genre");
 
-  const [games, setGames] = useState(() => {
-    const saved = localStorage.getItem("adminGames");
-    return saved ? JSON.parse(saved) : [];
-  });
-
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [message, setMessage] = useState(null);
   const { addToCart } = useCart();
 
-  // Update games if localStorage changes (cross-tab or manual updates)
+  // Fetch games from Firestore once on component mount
   useEffect(() => {
-    const handleStorageChange = () => {
-      const saved = localStorage.getItem("adminGames");
-      setGames(saved ? JSON.parse(saved) : []);
+    const fetchGames = async () => {
+      setLoading(true);
+      try {
+        const gamesCollection = collection(db, "games");
+        const snapshot = await getDocs(gamesCollection);
+        const gamesData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setGames(gamesData);
+      } catch (error) {
+        console.error("Error fetching games from Firestore:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-    window.addEventListener("storage", handleStorageChange);
 
-    // Optional: also update when location changes (e.g., switching genres)
-    // Could be helpful if localStorage is updated elsewhere
-    return () => window.removeEventListener("storage", handleStorageChange);
+    fetchGames();
   }, []);
 
-  // Filter games based on search and genre
+  // Filter games by search term or genre
   const displayedGames = searchTerm
     ? games.filter((game) =>
         game.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -85,18 +92,23 @@ function Products() {
             : "All Games"}
         </h2>
 
-        {displayedGames.length === 0 ? (
+        {loading ? (
+          <p className="loading-msg">Loading games...</p>
+        ) : displayedGames.length === 0 ? (
           <p className="no-games-msg">No games found.</p>
         ) : (
           <div className="products-grid">
             {displayedGames.map((game) => (
               <div key={game.id} className="game-card">
                 <div className="image-wrapper">
-                  <img src={game.cover} alt={game.title} />
+                  <img
+                    src={game.cover || "/images/default-cover.png"}
+                    alt={game.title}
+                  />
                   <div className="card-content">
                     <h3>{game.title}</h3>
-                    <p className="price">{game.price}</p>
-                    <p className="rating">⭐ {game.rating}</p>
+                    <p className="price">{game.price || "N/A"}</p>
+                    <p className="rating">⭐ {game.rating ?? "N/A"}</p>
                     <Link to={`/product/${game.id}`} className="btn-secondary">
                       View Details
                     </Link>
@@ -113,6 +125,7 @@ function Products() {
           </div>
         )}
       </div>
+
       <Toast message={message} visible={!!message} />
     </div>
   );
