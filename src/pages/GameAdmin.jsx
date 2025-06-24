@@ -7,22 +7,21 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db } from "../firebase";
+import { db, storage } from "../firebase"; // Make sure storage is exported!
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function AdminGames() {
   const gamesCollectionRef = collection(db, "games");
-  const storage = getStorage();
 
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Form state
   const [form, setForm] = useState({
-    id: null, // Firestore doc ID for editing
+    id: null,
     title: "",
     price: "",
-    cover: "",
+    cover: "", // this will store the uploaded image URL
     rating: "",
     genre: "",
     platform: "",
@@ -67,20 +66,28 @@ function AdminGames() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle file upload for cover image
+  // Handle image upload when a file is selected
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     try {
-      const storageRef = ref(storage, `game-covers/${file.name}_${Date.now()}`);
+      const fileName = `${file.name}-${Date.now()}`;
+      const storageRef = ref(storage, `game-covers/${fileName}`);
+
+      // Upload file
       await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(storageRef);
-      setForm((prev) => ({ ...prev, cover: downloadURL }));
+
+      // Get download URL
+      const url = await getDownloadURL(storageRef);
+
+      // Save the URL in form state automatically
+      setForm((prev) => ({ ...prev, cover: url }));
+
       alert("Image uploaded successfully!");
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      alert("Failed to upload image: " + error.message);
+    } catch (err) {
+      console.error("Upload failed:", err);
+      alert("Image upload failed: " + err.message);
     }
   };
 
@@ -115,7 +122,7 @@ function AdminGames() {
     const newGame = {
       title: form.title.trim(),
       price: form.price.trim(),
-      cover: form.cover.trim(),
+      cover: form.cover, // this is the URL from upload
       rating: parseFloat(form.rating) || 0,
       genre: form.genre.trim(),
       platform: form.platform.trim(),
@@ -190,7 +197,7 @@ function AdminGames() {
     }
   };
 
-  // Safe filtering of games based on inputs
+  // Filtering games
   const filteredGames = games.filter((game) => {
     const title = typeof game.title === "string" ? game.title : "";
     const genre = typeof game.genre === "string" ? game.genre : "";
@@ -248,12 +255,7 @@ function AdminGames() {
             type: "text",
             placeholder: 'e.g. "$39.99"',
           },
-          {
-            label: "Cover Image URL",
-            name: "cover",
-            type: "text",
-            placeholder: "e.g. https://your-image-url.com/game.jpg",
-          },
+          // No manual cover URL input anymore
           {
             label: "Rating",
             name: "rating",
@@ -318,7 +320,7 @@ function AdminGames() {
           )
         )}
 
-        {/* Upload cover image file */}
+        {/* File input for image upload */}
         <div style={{ marginBottom: "1rem" }}>
           <label
             style={{
@@ -328,34 +330,24 @@ function AdminGames() {
               color: "#555",
             }}
           >
-            Upload Cover Image
+            Upload Cover Image *
           </label>
           <input
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.6rem",
-              borderRadius: 4,
-              border: "1px solid #ccc",
-              fontSize: 16,
-              fontFamily: "inherit",
-              transition: "border-color 0.3s ease",
-            }}
+            style={{ width: "100%" }}
           />
-          {/* Preview */}
+          {/* Preview uploaded image */}
           {form.cover && (
             <img
               src={form.cover}
-              alt="Cover preview"
+              alt="Cover Preview"
               style={{
-                width: "100%",
-                maxHeight: 200,
-                objectFit: "contain",
                 marginTop: "0.5rem",
+                maxWidth: "200px",
                 borderRadius: 6,
-                border: "1px solid #ddd",
+                boxShadow: "0 0 5px rgba(0,0,0,0.15)",
               }}
             />
           )}
@@ -615,51 +607,27 @@ function AdminGames() {
                   >
                     <strong>Genre:</strong> {game.genre || "N/A"}
                   </p>
-                  <p
-                    style={{
-                      margin: "0.15rem 0",
-                      fontSize: "0.9rem",
-                      color: "#555",
-                    }}
-                  >
-                    <strong>Platform:</strong> {game.platform || "N/A"}
-                  </p>
-                  <p
-                    style={{
-                      margin: "0.15rem 0",
-                      fontSize: "0.9rem",
-                      color: "#555",
-                    }}
-                  >
-                    <strong>Release Year:</strong> {game.releaseYear || "N/A"}
-                  </p>
 
                   <div
                     style={{
-                      marginTop: "0.7rem",
+                      marginTop: "0.8rem",
                       display: "flex",
-                      gap: "0.7rem",
+                      gap: "0.5rem",
+                      justifyContent: "center",
                     }}
                   >
                     <button
                       onClick={() => handleEdit(game)}
                       style={{
                         flex: 1,
-                        padding: "0.4rem 0",
-                        fontWeight: 600,
-                        borderRadius: 5,
+                        backgroundColor: "#4a90e2",
                         border: "none",
-                        cursor: "pointer",
                         color: "white",
-                        backgroundColor: "#4caf50",
-                        transition: "background-color 0.3s ease",
+                        padding: "0.4rem 0",
+                        borderRadius: 5,
+                        cursor: "pointer",
+                        fontWeight: "600",
                       }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#3b8e3a")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#4caf50")
-                      }
                     >
                       Edit
                     </button>
@@ -667,21 +635,14 @@ function AdminGames() {
                       onClick={() => handleDelete(game.id)}
                       style={{
                         flex: 1,
-                        padding: "0.4rem 0",
-                        fontWeight: 600,
-                        borderRadius: 5,
+                        backgroundColor: "#e94e4e",
                         border: "none",
-                        cursor: "pointer",
                         color: "white",
-                        backgroundColor: "#e53935",
-                        transition: "background-color 0.3s ease",
+                        padding: "0.4rem 0",
+                        borderRadius: 5,
+                        cursor: "pointer",
+                        fontWeight: "600",
                       }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#ab2a24")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#e53935")
-                      }
                     >
                       Delete
                     </button>
