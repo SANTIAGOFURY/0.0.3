@@ -61,7 +61,20 @@ function AdminGames() {
     };
     loadGames();
   }, []);
-
+  useEffect(() => {
+    const testFetch = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "games"));
+        console.log(
+          "Games from Firestore:",
+          snapshot.docs.map((doc) => doc.data())
+        );
+      } catch (err) {
+        console.error("🔥 Firestore Error:", err.message);
+      }
+    };
+    testFetch();
+  }, []);
   // Upload initial games if collection is empty
   const uploadInitialGames = async () => {
     try {
