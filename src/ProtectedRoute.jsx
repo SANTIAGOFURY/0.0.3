@@ -4,7 +4,7 @@ import { auth } from "./firebase";
 
 const ADMIN_EMAILS = [
   "alphawar404@gmail.com",
-  "admin2@example.com",
+  "gajaked956@ethsms.com",
   "admin3@example.com",
 ];
 
