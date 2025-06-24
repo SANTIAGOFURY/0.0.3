@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; // make sure useEffect is imported
+import React, { useState, useEffect } from "react";
 import {
   collection,
   getDocs,
@@ -8,6 +8,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { db } from "../firebase";
+
 function AdminGames() {
   const gamesCollectionRef = collection(db, "games");
 
@@ -15,7 +16,8 @@ function AdminGames() {
   const [loading, setLoading] = useState(true);
 
   const [form, setForm] = useState({
-    id: null, // Firestore doc id
+    // This "id" holds Firestore document id when editing
+    id: null,
     title: "",
     price: "",
     cover: "",
@@ -36,13 +38,13 @@ function AdminGames() {
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
 
-  // Load all games from Firestore
+  // Fetch all games from Firestore on mount and after changes
   const fetchGames = async () => {
     setLoading(true);
     try {
       const snapshot = await getDocs(gamesCollectionRef);
       const gamesData = snapshot.docs.map((doc) => ({
-        id: doc.id,
+        id: doc.id, // Firestore document ID
         ...doc.data(),
       }));
       setGames(gamesData);
@@ -53,11 +55,17 @@ function AdminGames() {
     }
   };
 
+  useEffect(() => {
+    fetchGames();
+  }, []);
+
+  // Form input change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
   };
 
+  // Reset form to initial empty state
   const resetForm = () => {
     setForm({
       id: null,
@@ -76,6 +84,7 @@ function AdminGames() {
     setEditingId(null);
   };
 
+  // Submit new game or update existing game
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -111,10 +120,12 @@ function AdminGames() {
 
     try {
       if (editingId) {
+        // Update existing game doc by Firestore doc ID
         const gameDoc = doc(db, "games", editingId);
         await updateDoc(gameDoc, newGame);
         alert("Game updated successfully");
       } else {
+        // Add new game
         await addDoc(gamesCollectionRef, newGame);
         alert("Game added successfully");
       }
@@ -122,10 +133,11 @@ function AdminGames() {
       resetForm();
     } catch (error) {
       console.error("Error saving game:", error);
-      alert("Failed to save game.");
+      alert("Failed to save game: " + error.message);
     }
   };
 
+  // Fill form for editing selected game
   const handleEdit = (game) => {
     setEditingId(game.id);
     setForm({
@@ -145,9 +157,12 @@ function AdminGames() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Delete game by Firestore document ID
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this game?")) return;
+
     try {
+      console.log("Deleting game with doc id:", id);
       const gameDoc = doc(db, "games", id);
       await deleteDoc(gameDoc);
       alert("Game deleted successfully");
@@ -155,11 +170,11 @@ function AdminGames() {
       fetchGames();
     } catch (error) {
       console.error("Error deleting game:", error);
-      alert("Failed to delete game.");
+      alert("Failed to delete game: " + error.message);
     }
   };
 
-  // Filter games with safe checks
+  // Filter games safely based on filters
   const filteredGames = games.filter((game) => {
     const title = game.title || "";
     const genre = game.genre || "";
@@ -171,9 +186,7 @@ function AdminGames() {
 
     return titleMatch && idMatch && genreMatch;
   });
-  useEffect(() => {
-    fetchGames();
-  }, []);
+
   return (
     <div
       className="admin-container"
