@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; // make sure useEffect is imported
 import {
   collection,
   getDocs,
@@ -8,7 +8,6 @@ import {
   doc,
 } from "firebase/firestore";
 import { db } from "../firebase";
-
 function AdminGames() {
   const gamesCollectionRef = collection(db, "games");
 
@@ -53,10 +52,6 @@ function AdminGames() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchGames();
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -176,7 +171,9 @@ function AdminGames() {
 
     return titleMatch && idMatch && genreMatch;
   });
-
+  useEffect(() => {
+    fetchGames();
+  }, []);
   return (
     <div
       className="admin-container"
@@ -185,8 +182,6 @@ function AdminGames() {
       <h1 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         Admin: Manage Games
       </h1>
-
-      {/* Removed uploadInitialGames button - no local file */}
 
       <form
         className="admin-form"
@@ -205,9 +200,7 @@ function AdminGames() {
           {editingId ? "Edit Game" : "Add New Game"}
         </h2>
 
-        {/* Input fields */}
         {[
-          /* ...same as before... */
           {
             label: "Title *",
             name: "title",
@@ -291,7 +284,6 @@ function AdminGames() {
           )
         )}
 
-        {/* Description textareas */}
         {[
           {
             label: "Description - Short",
