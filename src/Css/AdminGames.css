@@ -1,131 +1,204 @@
 /* Container */
 .admin-container {
-  max-width: 960px;
-  margin: 2rem auto;
-  padding: 1rem;
+  max-width: 1200px;
+  margin: 1.5rem auto;
+  padding: 1rem 2rem;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #222;
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Headings */
 .admin-container h1,
 .admin-container h2 {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  color: #222;
 }
 
 /* Form Styles */
 .admin-form {
-  background: #f9f9f9;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
+  margin-bottom: 3rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: box-shadow 0.3s ease;
+}
+
+.admin-form:hover {
+  box-shadow: 0 12px 30px rgb(0 0 0 / 0.15);
 }
 
 .admin-form h2 {
-  margin-bottom: 1rem;
-  color: #333;
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+  color: #2a2a2a;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .form-group label {
   display: block;
   font-weight: 600;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.5rem;
   color: #555;
+  user-select: none;
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
+  padding: 0.65rem 0.8rem;
+  border: 1.8px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
   font-family: inherit;
+  resize: vertical;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+  border-color: #3b82f6;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
 }
 
+/* Buttons */
 .form-buttons {
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .btn-save,
 .btn-cancel {
   cursor: pointer;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  border-radius: 5px;
+  padding: 0.75rem 1.8rem;
+  font-size: 1.1rem;
+  border-radius: 10px;
   border: none;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
+  font-weight: 700;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  min-width: 140px;
+  text-align: center;
+  user-select: none;
 }
 
 .btn-save {
-  background-color: #4a90e2;
+  background-color: #2563eb;
   color: white;
+  box-shadow: 0 4px 12px rgb(37 99 235 / 0.5);
 }
 
-.btn-save:hover {
-  background-color: #357abd;
+.btn-save:hover,
+.btn-save:focus {
+  background-color: #1e40af;
+  box-shadow: 0 6px 20px rgb(30 64 175 / 0.7);
 }
 
 .btn-cancel {
-  background-color: #ccc;
-  color: #333;
+  background-color: #e5e7eb;
+  color: #374151;
+  box-shadow: 0 4px 12px rgb(229 231 235 / 0.5);
 }
 
-.btn-cancel:hover {
-  background-color: #999;
+.btn-cancel:hover,
+.btn-cancel:focus {
+  background-color: #9ca3af;
+  color: white;
+  box-shadow: 0 6px 20px rgb(156 163 175 / 0.7);
+}
+
+/* Filters Section */
+.admin-filters {
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.admin-filters h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: #222;
+}
+
+.filter-inputs {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-inputs input {
+  flex: 1 1 200px;
+  padding: 0.6rem 1rem;
+  border: 1.8px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+
+.filter-inputs input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
 }
 
 /* Games List Grid */
 .games-list {
-  margin-top: 1rem;
+  width: 100%;
+}
+
+.games-list h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #222;
 }
 
 .games-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
 .game-card-admin {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 3px 8px rgb(0 0 0 / 0.12);
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 5px 15px rgb(0 0 0 / 0.08);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
 }
 
-.game-card-admin:hover {
-  transform: scale(1.03);
+.game-card-admin:hover,
+.game-card-admin:focus-within {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgb(0 0 0 / 0.15);
 }
 
 .game-card-admin img {
   width: 100%;
-  height: 140px;
+  height: 160px;
   object-fit: cover;
   object-position: center;
+  user-select: none;
 }
 
 .game-info-admin {
-  padding: 0.8rem 1rem;
+  padding: 1rem 1.2rem;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -133,54 +206,66 @@
 }
 
 .game-info-admin h3 {
-  margin: 0 0 0.4rem 0;
-  color: #222;
+  margin: 0 0 0.5rem 0;
+  color: #111827;
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .game-info-admin p {
-  margin: 0.15rem 0;
-  font-size: 0.9rem;
-  color: #555;
+  margin: 0.3rem 0;
+  font-size: 1rem;
+  color: #4b5563;
+  user-select: text;
 }
 
 .btns-admin {
-  margin-top: 0.7rem;
+  margin-top: 1rem;
   display: flex;
-  gap: 0.7rem;
+  gap: 1rem;
 }
 
 .btn-edit,
 .btn-delete {
   flex: 1;
-  padding: 0.4rem 0;
-  font-weight: 600;
-  border-radius: 5px;
+  padding: 0.5rem 0;
+  font-weight: 700;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
   color: white;
-  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
 }
 
 .btn-edit {
-  background-color: #4caf50;
+  background-color: #10b981;
+  box-shadow: 0 4px 12px rgb(16 185 129 / 0.6);
 }
 
-.btn-edit:hover {
-  background-color: #3b8e3a;
+.btn-edit:hover,
+.btn-edit:focus {
+  background-color: #047857;
+  box-shadow: 0 6px 18px rgb(4 120 87 / 0.8);
 }
 
 .btn-delete {
-  background-color: #e74c3c;
+  background-color: #ef4444;
+  box-shadow: 0 4px 12px rgb(239 68 68 / 0.6);
 }
 
-.btn-delete:hover {
-  background-color: #c0392b;
+.btn-delete:hover,
+.btn-delete:focus {
+  background-color: #b91c1c;
+  box-shadow: 0 6px 18px rgb(185 28 28 / 0.8);
 }
 
 /* Responsive */
-@media (max-width: 600px) {
-  .games-grid {
-    grid-template-columns: 1fr;
+
+@media (max-width: 900px) {
+  .filter-inputs {
+    flex-direction: column;
   }
 
   .form-buttons {
@@ -190,5 +275,12 @@
   .btn-save,
   .btn-cancel {
     width: 100%;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 500px) {
+  .games-grid {
+    grid-template-columns: 1fr;
   }
 }

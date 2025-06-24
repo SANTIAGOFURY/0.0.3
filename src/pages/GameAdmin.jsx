@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import gamesData from "../Data/games";
-import "../Css/AdminGames.css"; // We'll define styles here
+import "../Css/AdminGames.css";
 
 function AdminGames() {
-  // Load from localStorage or fallback to gamesData
+  // Load games from localStorage or fallback to initial data
   const [games, setGames] = useState(() => {
     const saved = localStorage.getItem("adminGames");
     return saved ? JSON.parse(saved) : gamesData;
   });
 
+  // Form state for adding/editing games
   const [form, setForm] = useState({
     id: null,
     title: "",
@@ -26,12 +27,17 @@ function AdminGames() {
 
   const [editingId, setEditingId] = useState(null);
 
-  // Persist changes to localStorage
+  // Filters state
+  const [filterTitle, setFilterTitle] = useState("");
+  const [filterId, setFilterId] = useState("");
+  const [filterGenre, setFilterGenre] = useState("");
+
+  // Save to localStorage when games change
   useEffect(() => {
     localStorage.setItem("adminGames", JSON.stringify(games));
   }, [games]);
 
-  // Handle form field changes
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
@@ -56,7 +62,7 @@ function AdminGames() {
     setEditingId(null);
   };
 
-  // Add or update game
+  // Add or update a game
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -65,7 +71,6 @@ function AdminGames() {
       return;
     }
 
-    // Prepare new game object
     const newGame = {
       id: editingId ?? Date.now(),
       title: form.title.trim(),
@@ -93,17 +98,15 @@ function AdminGames() {
     };
 
     if (editingId !== null) {
-      // Edit existing game
       setGames((prev) => prev.map((g) => (g.id === editingId ? newGame : g)));
     } else {
-      // Add new game
       setGames((prev) => [newGame, ...prev]);
     }
 
     resetForm();
   };
 
-  // Edit button clicked
+  // Edit a game
   const handleEdit = (game) => {
     setEditingId(game.id);
     setForm({
@@ -123,13 +126,27 @@ function AdminGames() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Delete button clicked
+  // Delete a game
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this game?")) {
       setGames((prev) => prev.filter((g) => g.id !== id));
       if (editingId === id) resetForm();
     }
   };
+
+  // Filter games by title, id, and genre
+  const filteredGames = games.filter((game) => {
+    const titleMatch = game.title
+      .toLowerCase()
+      .includes(filterTitle.toLowerCase());
+    const idMatch = filterId
+      ? game.id.toString().includes(filterId.trim())
+      : true;
+    const genreMatch = game.genre
+      .toLowerCase()
+      .includes(filterGenre.toLowerCase());
+    return titleMatch && idMatch && genreMatch;
+  });
 
   return (
     <div className="admin-container">
@@ -271,13 +288,41 @@ function AdminGames() {
 
       <hr />
 
+      {/* Filters Section */}
+      <section className="admin-filters" style={{ marginBottom: "1rem" }}>
+        <h2>Filter Games</h2>
+        <div
+          className="filter-inputs"
+          style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}
+        >
+          <input
+            type="text"
+            placeholder="Search by Title"
+            value={filterTitle}
+            onChange={(e) => setFilterTitle(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Search by ID"
+            value={filterId}
+            onChange={(e) => setFilterId(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Search by Genre"
+            value={filterGenre}
+            onChange={(e) => setFilterGenre(e.target.value)}
+          />
+        </div>
+      </section>
+
       <section className="games-list">
         <h2>Existing Games</h2>
-        {games.length === 0 ? (
-          <p>No games available.</p>
+        {filteredGames.length === 0 ? (
+          <p>No games found matching filters.</p>
         ) : (
           <div className="games-grid">
-            {games.map((game) => (
+            {filteredGames.map((game) => (
               <div key={game.id} className="game-card-admin">
                 <img
                   src={game.cover || "/images/default-cover.png"}
@@ -286,6 +331,9 @@ function AdminGames() {
                 />
                 <div className="game-info-admin">
                   <h3>{game.title}</h3>
+                  <p>
+                    <strong>ID:</strong> {game.id}
+                  </p>
                   <p>
                     <strong>Price:</strong> {game.price || "N/A"}
                   </p>
