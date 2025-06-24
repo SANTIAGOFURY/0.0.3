@@ -4,10 +4,8 @@ import Footer from "./Footer";
 
 const Layout = () => {
   const location = useLocation();
-
   const showFooterPaths = ["/", "/about", "/support"];
   const shouldShowFooter = showFooterPaths.includes(location.pathname);
-
   return (
     <>
       <Header />

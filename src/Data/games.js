@@ -3317,7 +3317,7 @@ const games = [
   {
     id: 121,
     title: "Cyberpunk 2077",
-    price: "$39.99",
+    price: "399",
     cover: "/images/Covers/Cyberpunk 2077.jpeg",
     rating: 4.2,
     genre: "RPG",

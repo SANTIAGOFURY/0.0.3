@@ -1,0 +1,187 @@
+/* ✅ Container Background */
+.checkout {
+  width: 100vw;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  overflow-x: hidden;
+}
+
+.checkout::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-image: url("/images/blob2.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.4;
+}
+
+/* ✅ Checkout Box */
+.checkout-page {
+  width: 90%;
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #1e1b2f;
+  color: #f0f0f0;
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+  font-family: "Segoe UI", sans-serif;
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: none;
+}
+
+.checkout-page h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #c5aaff;
+}
+
+/* ✅ Payment Method Tabs */
+.payment-methods {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.payment-methods button {
+  flex: 1 1 150px;
+  min-width: 120px;
+  padding: 0.75rem 1rem;
+  background: #2e2a49;
+  color: #fff;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.payment-methods button:hover {
+  background: #3e3866;
+}
+
+.payment-methods button.active {
+  background: #6e4ed7;
+  border-color: #a07eff;
+}
+
+/* ✅ Payment Details Section */
+.payment-section {
+  background: #282343;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
+
+.payment-section h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #d3b7ff;
+}
+
+.payment-section p,
+.payment-section li {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.payment-section ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ✅ Input Styles */
+.payment-section label {
+  display: block;
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #ddd;
+}
+
+input[type="file"] {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.6rem;
+  background-color: #2e2a49;
+  color: #ccc;
+  border: 2px solid #4c3b9e;
+  border-radius: 10px;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+input[type="file"]:hover {
+  border-color: #a07eff;
+  background-color: #3a3466;
+}
+
+input[type="file"]::file-selector-button {
+  background: #6e4ed7;
+  border: none;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background: #7d5df1;
+}
+
+/* ✅ Payment Button */
+.payment-section button {
+  margin-top: 1rem;
+  padding: 0.7rem 1.2rem;
+  background: #6e4ed7;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-weight: bold;
+}
+
+.payment-section button:hover {
+  background: #7d5df1;
+}
+
+/* ✅ Mobile Responsive */
+@media screen and (max-width: 768px) {
+  .payment-methods {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .payment-methods button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .checkout-page {
+    margin: 2rem 1rem;
+    padding: 1.5rem;
+  }
+
+  .payment-section {
+    padding: 1rem;
+  }
+}
