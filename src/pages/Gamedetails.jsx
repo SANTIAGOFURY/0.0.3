@@ -1,71 +1,122 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import games from "../Data/games";
+import { useState, useEffect } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 import "../Css/GameDetails.css";
 import { useCart } from "../context/CartContext";
-import Toast from "../components/Toast"; // ✅ Import Toast
+import Toast from "../components/Toast";
 
 function GameDetails() {
-  const { id } = useParams();
+  const { id } = useParams(); // Firestore document ID
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const [message, setMessage] = useState(null); // ✅ Use message state
 
-  const game = games.find((g) => g.id.toString() === id);
+  const [game, setGame] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
 
-  if (!game) {
-    return <div className="not-found">Game not found.</div>;
-  }
+  useEffect(() => {
+    async function fetchGame() {
+      setLoading(true);
+      try {
+        const docRef = doc(db, "games", id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setGame({ id: docSnap.id, ...docSnap.data() });
+          setError(null);
+        } else {
+          setError("Game not found.");
+        }
+      } catch (err) {
+        setError("Failed to load game data.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchGame();
+  }, [id]);
 
   const handleAddToCart = () => {
-    addToCart(game);
-    setMessage(`${game.title} added to cart!`);
-    setTimeout(() => setMessage(null), 3000);
+    if (game) {
+      addToCart(game);
+      setMessage(`${game.title} added to cart!`);
+      setTimeout(() => setMessage(null), 3000);
+    }
   };
+
+  if (loading) return <p>Loading game details...</p>;
+  if (error)
+    return (
+      <div className="not-found">
+        <p>{error}</p>
+        <button onClick={() => navigate(-1)}>Go Back</button>
+      </div>
+    );
 
   return (
     <div className="game-details-page">
       <div className="game-details">
-        <img src={game.cover} alt={game.title} className="game-img" />
+        <img
+          src={game.cover || "/images/default-cover.png"}
+          alt={game.title}
+          className="game-img"
+        />
 
         <div className="game-info">
           <h2>{game.title}</h2>
           <p>
-            <strong>Genre:</strong> {game.genre}
+            <strong>Genre:</strong> {game.genre || "N/A"}
           </p>
           <p>
-            <strong>Platform:</strong> {game.platform}
+            <strong>Platform:</strong> {game.platform || "N/A"}
           </p>
           <p>
-            <strong>Release Year:</strong> {game.releaseYear}
+            <strong>Release Year:</strong> {game.releaseYear || "N/A"}
           </p>
           <p>
-            <strong>Price:</strong> {game.price}
+            <strong>Price:</strong> {game.price || "N/A"}
           </p>
 
           <div className="game-description">
             <h3>Description</h3>
-            <p>{game.description.short}</p>
-            <h4>System Requirements:</h4>
-            <ul>
-              {game.description.system.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
+            <p>{game.description?.short || "No description available."}</p>
 
-            <h4>Performance Features:</h4>
-            <ul>
-              {game.description.performance.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
+            {game.description?.system?.length > 0 && (
+              <>
+                <h4>System Requirements:</h4>
+                <ul>
+                  {game.description.system.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </>
+            )}
 
-            <h4>Game Features:</h4>
-            <ul>
-              {game.description.features.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
+            {game.description?.performance?.length > 0 && (
+              <>
+                <h4>Performance Features:</h4>
+                <ul>
+                  {game.description.performance.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {game.description?.features?.length > 0 && (
+              <>
+                <h4>Game Features:</h4>
+                <ul>
+                  {game.description.features.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </>
+            )}
           </div>
 
           <button className="btn-buy" onClick={handleAddToCart}>
@@ -77,7 +128,6 @@ function GameDetails() {
         </div>
       </div>
 
-      {/* ✅ Toast Message */}
       <Toast message={message} visible={!!message} />
     </div>
   );
