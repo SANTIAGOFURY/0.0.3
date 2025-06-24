@@ -8,7 +8,6 @@ import {
   doc,
 } from "firebase/firestore";
 import { db } from "../firebase";
-import initialGames from "../Data/games";
 
 function AdminGames() {
   const gamesCollectionRef = collection(db, "games");
@@ -58,25 +57,6 @@ function AdminGames() {
   useEffect(() => {
     fetchGames();
   }, []);
-
-  // Upload initial games if collection is empty
-  const uploadInitialGames = async () => {
-    try {
-      const snapshot = await getDocs(gamesCollectionRef);
-      if (snapshot.empty) {
-        for (const game of initialGames) {
-          await addDoc(gamesCollectionRef, game);
-        }
-        alert("Initial games uploaded!");
-        fetchGames();
-      } else {
-        alert("Games collection is not empty!");
-      }
-    } catch (error) {
-      console.error("Error uploading initial games:", error);
-      alert("Failed to upload initial games.");
-    }
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -206,21 +186,7 @@ function AdminGames() {
         Admin: Manage Games
       </h1>
 
-      <button
-        onClick={uploadInitialGames}
-        style={{
-          marginBottom: "1.5rem",
-          padding: "0.6rem 1.2rem",
-          fontWeight: "600",
-          backgroundColor: "#4a90e2",
-          color: "#fff",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
-      >
-        Upload Initial Games from File
-      </button>
+      {/* Removed uploadInitialGames button - no local file */}
 
       <form
         className="admin-form"
@@ -239,7 +205,9 @@ function AdminGames() {
           {editingId ? "Edit Game" : "Add New Game"}
         </h2>
 
+        {/* Input fields */}
         {[
+          /* ...same as before... */
           {
             label: "Title *",
             name: "title",
@@ -323,6 +291,7 @@ function AdminGames() {
           )
         )}
 
+        {/* Description textareas */}
         {[
           {
             label: "Description - Short",
