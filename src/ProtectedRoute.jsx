@@ -5,7 +5,7 @@ import { auth } from "./firebase";
 const ADMIN_EMAILS = [
   "alphawar404@gmail.com",
   "gajaked956@ethsms.com",
-  "admin3@example.com",
+  "",
 ];
 
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
