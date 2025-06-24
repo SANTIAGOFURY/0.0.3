@@ -7,7 +7,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db, storage } from "../firebase"; // Make sure storage is exported!
+import { db, storage } from "../firebase"; // Make sure your firebase.js exports both db and storage
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function AdminGames() {
@@ -21,7 +21,7 @@ function AdminGames() {
     id: null,
     title: "",
     price: "",
-    cover: "", // this will store the uploaded image URL
+    cover: "", // URL from uploaded image
     rating: "",
     genre: "",
     platform: "",
@@ -39,7 +39,7 @@ function AdminGames() {
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
 
-  // Fetch all games from Firestore
+  // Fetch all games
   const fetchGames = async () => {
     setLoading(true);
     try {
@@ -60,13 +60,13 @@ function AdminGames() {
     fetchGames();
   }, []);
 
-  // Handle form input changes
+  // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle image upload when a file is selected
+  // Upload image and set URL to form.cover
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -75,13 +75,10 @@ function AdminGames() {
       const fileName = `${file.name}-${Date.now()}`;
       const storageRef = ref(storage, `game-covers/${fileName}`);
 
-      // Upload file
       await uploadBytes(storageRef, file);
 
-      // Get download URL
       const url = await getDownloadURL(storageRef);
 
-      // Save the URL in form state automatically
       setForm((prev) => ({ ...prev, cover: url }));
 
       alert("Image uploaded successfully!");
@@ -91,7 +88,7 @@ function AdminGames() {
     }
   };
 
-  // Reset form to default empty values
+  // Reset form
   const resetForm = () => {
     setForm({
       id: null,
@@ -110,7 +107,7 @@ function AdminGames() {
     setEditingId(null);
   };
 
-  // Submit handler for add/update game
+  // Add or update game on submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -122,7 +119,7 @@ function AdminGames() {
     const newGame = {
       title: form.title.trim(),
       price: form.price.trim(),
-      cover: form.cover, // this is the URL from upload
+      cover: form.cover, // Uploaded image URL
       rating: parseFloat(form.rating) || 0,
       genre: form.genre.trim(),
       platform: form.platform.trim(),
@@ -161,7 +158,7 @@ function AdminGames() {
     }
   };
 
-  // Load game data into form for editing
+  // Load game data to form for editing
   const handleEdit = (game) => {
     setEditingId(game.id);
     setForm({
@@ -181,7 +178,7 @@ function AdminGames() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Delete a game by Firestore doc ID
+  // Delete game document
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this game?")) return;
 
@@ -197,7 +194,7 @@ function AdminGames() {
     }
   };
 
-  // Filtering games
+  // Filter games list
   const filteredGames = games.filter((game) => {
     const title = typeof game.title === "string" ? game.title : "";
     const genre = typeof game.genre === "string" ? game.genre : "";
@@ -255,7 +252,6 @@ function AdminGames() {
             type: "text",
             placeholder: 'e.g. "$39.99"',
           },
-          // No manual cover URL input anymore
           {
             label: "Rating",
             name: "rating",
@@ -320,7 +316,7 @@ function AdminGames() {
           )
         )}
 
-        {/* File input for image upload */}
+        {/* File input for cover image */}
         <div style={{ marginBottom: "1rem" }}>
           <label
             style={{
@@ -338,7 +334,6 @@ function AdminGames() {
             onChange={handleFileChange}
             style={{ width: "100%" }}
           />
-          {/* Preview uploaded image */}
           {form.cover && (
             <img
               src={form.cover}
@@ -353,7 +348,7 @@ function AdminGames() {
           )}
         </div>
 
-        {/* Textareas for descriptions */}
+        {/* Description textareas */}
         {[
           {
             label: "Description - Short",
