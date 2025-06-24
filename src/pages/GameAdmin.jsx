@@ -17,7 +17,7 @@ function AdminGames() {
   const [loading, setLoading] = useState(true);
 
   const [form, setForm] = useState({
-    id: null,
+    id: null, // Firestore doc id
     title: "",
     price: "",
     cover: "",
@@ -38,7 +38,7 @@ function AdminGames() {
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
 
-  // Fetch all games from Firestore
+  // Load all games from Firestore
   const fetchGames = async () => {
     setLoading(true);
     try {
@@ -184,15 +184,16 @@ function AdminGames() {
     }
   };
 
-  // Filter games
+  // Filter games with safe checks
   const filteredGames = games.filter((game) => {
-    const titleMatch = game.title
-      .toLowerCase()
-      .includes(filterTitle.toLowerCase());
-    const idMatch = filterId ? game.id.includes(filterId.trim()) : true;
-    const genreMatch = game.genre
-      .toLowerCase()
-      .includes(filterGenre.toLowerCase());
+    const title = game.title || "";
+    const genre = game.genre || "";
+    const id = game.id ? game.id.toString() : "";
+
+    const titleMatch = title.toLowerCase().includes(filterTitle.toLowerCase());
+    const idMatch = filterId ? id.includes(filterId.trim()) : true;
+    const genreMatch = genre.toLowerCase().includes(filterGenre.toLowerCase());
+
     return titleMatch && idMatch && genreMatch;
   });
 
@@ -389,7 +390,7 @@ function AdminGames() {
               padding: "0.6rem 1.2rem",
               border: "none",
               borderRadius: "5px",
-              fontWeight: "600",
+              fontWeight: 600,
               cursor: "pointer",
               transition: "background-color 0.3s ease",
             }}
@@ -407,7 +408,7 @@ function AdminGames() {
                 padding: "0.6rem 1.2rem",
                 border: "none",
                 borderRadius: "5px",
-                fontWeight: "600",
+                fontWeight: 600,
                 cursor: "pointer",
                 transition: "background-color 0.3s ease",
               }}
@@ -604,7 +605,7 @@ function AdminGames() {
                       style={{
                         flex: 1,
                         padding: "0.4rem 0",
-                        fontWeight: "600",
+                        fontWeight: 600,
                         borderRadius: "5px",
                         border: "none",
                         cursor: "pointer",
@@ -626,19 +627,19 @@ function AdminGames() {
                       style={{
                         flex: 1,
                         padding: "0.4rem 0",
-                        fontWeight: "600",
+                        fontWeight: 600,
                         borderRadius: "5px",
                         border: "none",
                         cursor: "pointer",
                         color: "white",
-                        backgroundColor: "#e74c3c",
+                        backgroundColor: "#e53935",
                         transition: "background-color 0.3s ease",
                       }}
                       onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#c0392b")
+                        (e.currentTarget.style.backgroundColor = "#ab2a24")
                       }
                       onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#e74c3c")
+                        (e.currentTarget.style.backgroundColor = "#e53935")
                       }
                     >
                       Delete
