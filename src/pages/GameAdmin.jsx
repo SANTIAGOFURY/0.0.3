@@ -15,9 +15,9 @@ function AdminGames() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Form state
   const [form, setForm] = useState({
-    // This "id" holds Firestore document id when editing
-    id: null,
+    id: null, // Firestore doc ID for editing
     title: "",
     price: "",
     cover: "",
@@ -38,13 +38,13 @@ function AdminGames() {
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
 
-  // Fetch all games from Firestore on mount and after changes
+  // Fetch all games from Firestore
   const fetchGames = async () => {
     setLoading(true);
     try {
       const snapshot = await getDocs(gamesCollectionRef);
       const gamesData = snapshot.docs.map((doc) => ({
-        id: doc.id, // Firestore document ID
+        id: doc.id,
         ...doc.data(),
       }));
       setGames(gamesData);
@@ -59,13 +59,13 @@ function AdminGames() {
     fetchGames();
   }, []);
 
-  // Form input change handler
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Reset form to initial empty state
+  // Reset form to default empty values
   const resetForm = () => {
     setForm({
       id: null,
@@ -84,7 +84,7 @@ function AdminGames() {
     setEditingId(null);
   };
 
-  // Submit new game or update existing game
+  // Submit handler for add/update game
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -120,12 +120,10 @@ function AdminGames() {
 
     try {
       if (editingId) {
-        // Update existing game doc by Firestore doc ID
         const gameDoc = doc(db, "games", editingId);
         await updateDoc(gameDoc, newGame);
         alert("Game updated successfully");
       } else {
-        // Add new game
         await addDoc(gamesCollectionRef, newGame);
         alert("Game added successfully");
       }
@@ -137,7 +135,7 @@ function AdminGames() {
     }
   };
 
-  // Fill form for editing selected game
+  // Load game data into form for editing
   const handleEdit = (game) => {
     setEditingId(game.id);
     setForm({
@@ -157,7 +155,7 @@ function AdminGames() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Delete game by Firestore document ID
+  // Delete a game by Firestore doc ID
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this game?")) return;
 
@@ -174,35 +172,39 @@ function AdminGames() {
     }
   };
 
-  // Filter games safely based on filters
+  // Safe filtering of games based on inputs
   const filteredGames = games.filter((game) => {
-    const title = game.title || "";
-    const genre = game.genre || "";
+    const title = typeof game.title === "string" ? game.title : "";
+    const genre = typeof game.genre === "string" ? game.genre : "";
     const id = game.id ? game.id.toString() : "";
 
-    const titleMatch = title.toLowerCase().includes(filterTitle.toLowerCase());
-    const idMatch = filterId ? id.includes(filterId.trim()) : true;
-    const genreMatch = genre.toLowerCase().includes(filterGenre.toLowerCase());
+    const filterTitleLower = filterTitle.toLowerCase();
+    const filterGenreLower = filterGenre.toLowerCase();
+    const filterIdTrim = filterId.trim();
 
-    return titleMatch && idMatch && genreMatch;
+    const titleMatch = title.toLowerCase().includes(filterTitleLower);
+    const genreMatch = genre.toLowerCase().includes(filterGenreLower);
+    const idMatch = filterIdTrim ? id.includes(filterIdTrim) : true;
+
+    return titleMatch && genreMatch && idMatch;
   });
 
   return (
     <div
       className="admin-container"
-      style={{ maxWidth: "1000px", margin: "2rem auto", padding: "1rem" }}
+      style={{ maxWidth: 1000, margin: "2rem auto", padding: "1rem" }}
     >
       <h1 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         Admin: Manage Games
       </h1>
 
+      {/* Add / Edit Game Form */}
       <form
-        className="admin-form"
         onSubmit={handleSubmit}
         style={{
           background: "#f9f9f9",
           padding: "1.5rem",
-          borderRadius: "8px",
+          borderRadius: 8,
           marginBottom: "2rem",
           boxShadow: "0 0 12px rgba(0,0,0,0.1)",
         }}
@@ -213,6 +215,7 @@ function AdminGames() {
           {editingId ? "Edit Game" : "Add New Game"}
         </h2>
 
+        {/* Text inputs */}
         {[
           {
             label: "Title *",
@@ -267,7 +270,7 @@ function AdminGames() {
                 style={{
                   display: "block",
                   fontWeight: 600,
-                  marginBottom: "0.3rem",
+                  marginBottom: 4,
                   color: "#555",
                 }}
               >
@@ -286,9 +289,9 @@ function AdminGames() {
                 style={{
                   width: "100%",
                   padding: "0.4rem 0.6rem",
-                  borderRadius: "4px",
+                  borderRadius: 4,
                   border: "1px solid #ccc",
-                  fontSize: "1rem",
+                  fontSize: 16,
                   fontFamily: "inherit",
                   transition: "border-color 0.3s ease",
                 }}
@@ -297,6 +300,7 @@ function AdminGames() {
           )
         )}
 
+        {/* Textareas for descriptions */}
         {[
           {
             label: "Description - Short",
@@ -328,7 +332,7 @@ function AdminGames() {
               style={{
                 display: "block",
                 fontWeight: 600,
-                marginBottom: "0.3rem",
+                marginBottom: 4,
                 color: "#555",
               }}
             >
@@ -343,9 +347,9 @@ function AdminGames() {
               style={{
                 width: "100%",
                 padding: "0.4rem 0.6rem",
-                borderRadius: "4px",
+                borderRadius: 4,
                 border: "1px solid #ccc",
-                fontSize: "1rem",
+                fontSize: 16,
                 fontFamily: "inherit",
                 transition: "border-color 0.3s ease",
               }}
@@ -363,7 +367,7 @@ function AdminGames() {
               color: "#fff",
               padding: "0.6rem 1.2rem",
               border: "none",
-              borderRadius: "5px",
+              borderRadius: 5,
               fontWeight: 600,
               cursor: "pointer",
               transition: "background-color 0.3s ease",
@@ -381,7 +385,7 @@ function AdminGames() {
                 color: "#333",
                 padding: "0.6rem 1.2rem",
                 border: "none",
-                borderRadius: "5px",
+                borderRadius: 5,
                 fontWeight: 600,
                 cursor: "pointer",
                 transition: "background-color 0.3s ease",
@@ -417,9 +421,9 @@ function AdminGames() {
             style={{
               padding: "0.5rem",
               flex: "1 1 200px",
-              borderRadius: "4px",
+              borderRadius: 4,
               border: "1px solid #ccc",
-              fontSize: "1rem",
+              fontSize: 16,
             }}
           />
           <input
@@ -430,9 +434,9 @@ function AdminGames() {
             style={{
               padding: "0.5rem",
               flex: "1 1 200px",
-              borderRadius: "4px",
+              borderRadius: 4,
               border: "1px solid #ccc",
-              fontSize: "1rem",
+              fontSize: 16,
             }}
           />
           <input
@@ -443,9 +447,9 @@ function AdminGames() {
             style={{
               padding: "0.5rem",
               flex: "1 1 200px",
-              borderRadius: "4px",
+              borderRadius: 4,
               border: "1px solid #ccc",
-              fontSize: "1rem",
+              fontSize: 16,
             }}
           />
         </div>
@@ -456,6 +460,7 @@ function AdminGames() {
         <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>
           Existing Games
         </h2>
+
         {loading ? (
           <p style={{ textAlign: "center" }}>Loading games...</p>
         ) : filteredGames.length === 0 ? (
@@ -475,7 +480,7 @@ function AdminGames() {
                 key={game.id}
                 style={{
                   backgroundColor: "white",
-                  borderRadius: "10px",
+                  borderRadius: 10,
                   boxShadow: "0 3px 8px rgba(0,0,0,0.12)",
                   overflow: "hidden",
                   display: "flex",
@@ -495,7 +500,7 @@ function AdminGames() {
                   loading="lazy"
                   style={{
                     width: "100%",
-                    height: "140px",
+                    height: 140,
                     objectFit: "cover",
                     objectPosition: "center",
                   }}
@@ -512,6 +517,7 @@ function AdminGames() {
                   <h3 style={{ margin: "0 0 0.4rem 0", color: "#222" }}>
                     {game.title}
                   </h3>
+
                   <p
                     style={{
                       margin: "0.15rem 0",
@@ -580,7 +586,7 @@ function AdminGames() {
                         flex: 1,
                         padding: "0.4rem 0",
                         fontWeight: 600,
-                        borderRadius: "5px",
+                        borderRadius: 5,
                         border: "none",
                         cursor: "pointer",
                         color: "white",
@@ -602,7 +608,7 @@ function AdminGames() {
                         flex: 1,
                         padding: "0.4rem 0",
                         fontWeight: 600,
-                        borderRadius: "5px",
+                        borderRadius: 5,
                         border: "none",
                         cursor: "pointer",
                         color: "white",
