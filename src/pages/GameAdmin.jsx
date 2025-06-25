@@ -7,21 +7,20 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../firebase"; // No storage import needed
 
 function AdminGames() {
   const gamesCollectionRef = collection(db, "games");
 
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
 
   // Form state
   const [form, setForm] = useState({
     id: null,
     title: "",
     price: "",
-    cover: "",
+    cover: "", // URL string input
     rating: "",
     genre: "",
     platform: "",
@@ -30,7 +29,7 @@ function AdminGames() {
     descriptionSystem: "",
     descriptionPerformance: "",
     descriptionFeatures: "",
-    featured: false,
+    featured: false, // New featured checkbox state
   });
 
   const [editingId, setEditingId] = useState(null);
@@ -40,10 +39,7 @@ function AdminGames() {
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
 
-  // Validation errors
-  const [errors, setErrors] = useState({});
-
-  // Fetch all games
+  // Fetch all games from Firestore
   const fetchGames = async () => {
     setLoading(true);
     try {
@@ -64,49 +60,17 @@ function AdminGames() {
     fetchGames();
   }, []);
 
-  const validateForm = () => {
-    const errs = {};
-    if (!form.title.trim()) errs.title = "Title is required.";
-    else {
-      // Duplicate title check (excluding editing game)
-      const titleExists = games.some(
-        (g) =>
-          g.title.toLowerCase() === form.title.trim().toLowerCase() &&
-          g.id !== editingId
-      );
-      if (titleExists) errs.title = "Title already exists.";
-    }
-    if (!form.cover.trim()) errs.cover = "Cover image URL is required.";
-
-    if (form.rating) {
-      const ratingNum = parseFloat(form.rating);
-      if (isNaN(ratingNum) || ratingNum < 0 || ratingNum > 5)
-        errs.rating = "Rating must be between 0 and 5.";
-    }
-
-    if (form.featured) {
-      const featuredCount = games.filter(
-        (g) => g.featured && g.id !== editingId
-      ).length;
-      if (featuredCount >= 10) {
-        errs.featured = "Max 10 featured games allowed.";
-      }
-    }
-
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
-
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-    // Clear error for this field on change
-    setErrors((prev) => ({ ...prev, [name]: null, featured: null }));
+    if (type === "checkbox") {
+      setForm((prev) => ({ ...prev, [name]: checked }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
+  // Reset form to empty values
   const resetForm = () => {
     setForm({
       id: null,
@@ -124,15 +88,33 @@ function AdminGames() {
       featured: false,
     });
     setEditingId(null);
-    setErrors({});
   };
 
+  // Add or update game document with featured limit check
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (!form.title.trim()) {
+      alert("Title is required");
+      return;
+    }
 
-    setSubmitting(true);
+    if (!form.cover.trim()) {
+      alert("Cover image URL is required");
+      return;
+    }
+
+    // Count how many games are featured excluding current edited game
+    if (form.featured) {
+      const featuredCount = games.filter(
+        (g) => g.featured && g.id !== editingId
+      ).length;
+
+      if (featuredCount >= 10) {
+        alert("You can only have up to 10 featured games.");
+        return;
+      }
+    }
 
     const newGame = {
       title: form.title.trim(),
@@ -169,16 +151,15 @@ function AdminGames() {
         await addDoc(gamesCollectionRef, newGame);
         alert("Game added successfully");
       }
-      await fetchGames();
+      fetchGames();
       resetForm();
     } catch (error) {
       console.error("Error saving game:", error);
       alert("Failed to save game: " + error.message);
-    } finally {
-      setSubmitting(false);
     }
   };
 
+  // Load game into form for editing
   const handleEdit = (game) => {
     setEditingId(game.id);
     setForm({
@@ -196,30 +177,26 @@ function AdminGames() {
       descriptionFeatures: (game.description?.features || []).join(", "),
       featured: !!game.featured,
     });
-    setErrors({});
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Delete game
   const handleDelete = async (id) => {
-    if (
-      !window.confirm(
-        "⚠️ Are you sure you want to delete this game? This action cannot be undone."
-      )
-    )
-      return;
+    if (!window.confirm("Are you sure you want to delete this game?")) return;
 
     try {
       const gameDoc = doc(db, "games", id);
       await deleteDoc(gameDoc);
       alert("Game deleted successfully");
       if (editingId === id) resetForm();
-      await fetchGames();
+      fetchGames();
     } catch (error) {
       console.error("Error deleting game:", error);
       alert("Failed to delete game: " + error.message);
     }
   };
 
+  // Filter games list
   const filteredGames = games.filter((game) => {
     const title = typeof game.title === "string" ? game.title : "";
     const genre = typeof game.genre === "string" ? game.genre : "";
@@ -236,8 +213,6 @@ function AdminGames() {
     return titleMatch && genreMatch && idMatch;
   });
 
-  const featuredCount = games.filter((g) => g.featured).length;
-
   return (
     <div
       className="admin-container"
@@ -246,19 +221,6 @@ function AdminGames() {
       <h1 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         Admin: Manage Games
       </h1>
-
-      {/* Featured count display */}
-      <p style={{ textAlign: "center", marginBottom: 10, fontWeight: "600" }}>
-        Featured Games:{" "}
-        <span
-          style={{
-            color: featuredCount >= 10 ? "crimson" : "#4a90e2",
-            fontWeight: "700",
-          }}
-        >
-          {featuredCount} / 10
-        </span>
-      </p>
 
       {/* Add / Edit Game Form */}
       <form
@@ -270,7 +232,6 @@ function AdminGames() {
           marginBottom: "2rem",
           boxShadow: "0 0 12px rgba(0,0,0,0.1)",
         }}
-        noValidate
       >
         <h2
           style={{ marginBottom: "1rem", color: "#333", textAlign: "center" }}
@@ -278,7 +239,7 @@ function AdminGames() {
           {editingId ? "Edit Game" : "Add New Game"}
         </h2>
 
-        {/* Text inputs with inline error */}
+        {/* Text inputs */}
         {[
           {
             label: "Title *",
@@ -324,7 +285,6 @@ function AdminGames() {
           ({ label, name, type, placeholder, min, max, step, required }) => (
             <div key={name} style={{ marginBottom: "1rem" }}>
               <label
-                htmlFor={name}
                 style={{
                   display: "block",
                   fontWeight: 600,
@@ -335,7 +295,6 @@ function AdminGames() {
                 {label}
               </label>
               <input
-                id={name}
                 name={name}
                 type={type}
                 min={min}
@@ -345,27 +304,16 @@ function AdminGames() {
                 onChange={handleChange}
                 placeholder={placeholder}
                 required={required}
-                aria-invalid={errors[name] ? "true" : "false"}
-                aria-describedby={errors[name] ? `${name}-error` : undefined}
                 style={{
                   width: "100%",
                   padding: "0.4rem 0.6rem",
                   borderRadius: 4,
-                  border: errors[name] ? "2px solid crimson" : "1px solid #ccc",
+                  border: "1px solid #ccc",
                   fontSize: 16,
                   fontFamily: "inherit",
                   transition: "border-color 0.3s ease",
                 }}
               />
-              {errors[name] && (
-                <span
-                  id={`${name}-error`}
-                  style={{ color: "crimson", fontSize: "0.85rem" }}
-                  role="alert"
-                >
-                  {errors[name]}
-                </span>
-              )}
             </div>
           )
         )}
@@ -373,7 +321,6 @@ function AdminGames() {
         {/* Cover image URL input */}
         <div style={{ marginBottom: "1rem" }}>
           <label
-            htmlFor="cover"
             style={{
               display: "block",
               fontWeight: 600,
@@ -384,34 +331,22 @@ function AdminGames() {
             Cover Image URL *
           </label>
           <input
-            id="cover"
             type="url"
             name="cover"
             value={form.cover}
             onChange={handleChange}
             placeholder="Paste your GitHub raw image URL here"
             required
-            aria-invalid={errors.cover ? "true" : "false"}
-            aria-describedby={errors.cover ? "cover-error" : undefined}
             style={{
               width: "100%",
               padding: "0.4rem 0.6rem",
               borderRadius: 4,
-              border: errors.cover ? "2px solid crimson" : "1px solid #ccc",
+              border: "1px solid #ccc",
               fontSize: 16,
               fontFamily: "inherit",
               transition: "border-color 0.3s ease",
             }}
           />
-          {errors.cover && (
-            <span
-              id="cover-error"
-              style={{ color: "crimson", fontSize: "0.85rem" }}
-              role="alert"
-            >
-              {errors.cover}
-            </span>
-          )}
           {form.cover && (
             <img
               src={form.cover}
@@ -429,36 +364,23 @@ function AdminGames() {
         {/* Featured checkbox */}
         <div style={{ marginBottom: "1rem" }}>
           <label
-            htmlFor="featured"
             style={{
               display: "inline-flex",
               alignItems: "center",
               gap: "0.5rem",
               fontWeight: 600,
-              color: errors.featured ? "crimson" : "#555",
+              color: "#555",
               cursor: "pointer",
             }}
           >
             <input
-              id="featured"
               type="checkbox"
               name="featured"
               checked={form.featured}
               onChange={handleChange}
-              aria-invalid={errors.featured ? "true" : "false"}
-              aria-describedby={errors.featured ? "featured-error" : undefined}
             />
             Featured Game
           </label>
-          {errors.featured && (
-            <div
-              id="featured-error"
-              style={{ color: "crimson", fontSize: "0.85rem", marginTop: 4 }}
-              role="alert"
-            >
-              {errors.featured}
-            </div>
-          )}
         </div>
 
         {/* Description textareas */}
@@ -490,7 +412,6 @@ function AdminGames() {
         ].map(({ label, name, placeholder, rows }) => (
           <div key={name} style={{ marginBottom: "1rem" }}>
             <label
-              htmlFor={name}
               style={{
                 display: "block",
                 fontWeight: 600,
@@ -501,7 +422,6 @@ function AdminGames() {
               {label}
             </label>
             <textarea
-              id={name}
               name={name}
               value={form[name]}
               onChange={handleChange}
@@ -521,55 +441,42 @@ function AdminGames() {
         ))}
 
         <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            gap: "1rem",
-            marginTop: 12,
-          }}
+          style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
         >
           <button
             type="submit"
-            disabled={submitting || Object.keys(errors).length > 0}
             style={{
-              backgroundColor:
-                submitting || Object.keys(errors).length > 0
-                  ? "#a2c1f5"
-                  : "#4a90e2",
+              backgroundColor: "#4a90e2",
               color: "#fff",
               padding: "0.6rem 1.2rem",
               border: "none",
               borderRadius: 5,
-              fontWeight: 600,
-              cursor:
-                submitting || Object.keys(errors).length > 0
-                  ? "not-allowed"
-                  : "pointer",
+              fontWeight: "600",
+              cursor: "pointer",
               transition: "background-color 0.3s ease",
-              minWidth: 110,
             }}
           >
-            {submitting ? "Saving..." : editingId ? "Save Changes" : "Add Game"}
+            {editingId ? "Save Changes" : "Add Game"}
           </button>
 
-          <button
-            type="button"
-            onClick={resetForm}
-            disabled={submitting}
-            style={{
-              backgroundColor: "#ccc",
-              color: "#333",
-              padding: "0.6rem 1.2rem",
-              border: "none",
-              borderRadius: 5,
-              fontWeight: 600,
-              cursor: submitting ? "not-allowed" : "pointer",
-              transition: "background-color 0.3s ease",
-              minWidth: 110,
-            }}
-          >
-            Reset
-          </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={resetForm}
+              style={{
+                backgroundColor: "#ccc",
+                color: "#333",
+                padding: "0.6rem 1.2rem",
+                border: "none",
+                borderRadius: 5,
+                fontWeight: "600",
+                cursor: "pointer",
+                transition: "background-color 0.3s ease",
+              }}
+            >
+              Cancel
+            </button>
+          )}
         </div>
       </form>
 
@@ -601,7 +508,6 @@ function AdminGames() {
               border: "1px solid #ccc",
               fontSize: 16,
             }}
-            aria-label="Filter games by title"
           />
           <input
             type="text"
@@ -615,7 +521,6 @@ function AdminGames() {
               border: "1px solid #ccc",
               fontSize: 16,
             }}
-            aria-label="Filter games by ID"
           />
           <input
             type="text"
@@ -625,11 +530,10 @@ function AdminGames() {
             style={{
               padding: "0.5rem",
               flex: "1 1 200px",
-              borderRadius: 4,
               border: "1px solid #ccc",
+              borderRadius: 4,
               fontSize: 16,
             }}
-            aria-label="Filter games by genre"
           />
         </div>
       </section>
@@ -764,7 +668,6 @@ function AdminGames() {
                         cursor: "pointer",
                         fontWeight: "600",
                       }}
-                      aria-label={`Edit ${game.title}`}
                     >
                       Edit
                     </button>
@@ -780,7 +683,6 @@ function AdminGames() {
                         cursor: "pointer",
                         fontWeight: "600",
                       }}
-                      aria-label={`Delete ${game.title}`}
                     >
                       Delete
                     </button>
