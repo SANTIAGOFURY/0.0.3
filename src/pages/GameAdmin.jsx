@@ -7,8 +7,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db, storage } from "../firebase"; // Make sure your firebase.js exports both db and storage
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db } from "../firebase"; // No storage import needed
 
 function AdminGames() {
   const gamesCollectionRef = collection(db, "games");
@@ -21,7 +20,7 @@ function AdminGames() {
     id: null,
     title: "",
     price: "",
-    cover: "", // URL from uploaded image
+    cover: "", // Now a URL string input
     rating: "",
     genre: "",
     platform: "",
@@ -39,7 +38,7 @@ function AdminGames() {
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
 
-  // Fetch all games
+  // Fetch all games from Firestore
   const fetchGames = async () => {
     setLoading(true);
     try {
@@ -60,35 +59,13 @@ function AdminGames() {
     fetchGames();
   }, []);
 
-  // Handle form field changes
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Upload image and set URL to form.cover
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    try {
-      const fileName = `${file.name}-${Date.now()}`;
-      const storageRef = ref(storage, `game-covers/${fileName}`);
-
-      await uploadBytes(storageRef, file);
-
-      const url = await getDownloadURL(storageRef);
-
-      setForm((prev) => ({ ...prev, cover: url }));
-
-      alert("Image uploaded successfully!");
-    } catch (err) {
-      console.error("Upload failed:", err);
-      alert("Image upload failed: " + err.message);
-    }
-  };
-
-  // Reset form
+  // Reset form to empty values
   const resetForm = () => {
     setForm({
       id: null,
@@ -107,7 +84,7 @@ function AdminGames() {
     setEditingId(null);
   };
 
-  // Add or update game on submit
+  // Add or update game document
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -116,10 +93,15 @@ function AdminGames() {
       return;
     }
 
+    if (!form.cover.trim()) {
+      alert("Cover image URL is required");
+      return;
+    }
+
     const newGame = {
       title: form.title.trim(),
       price: form.price.trim(),
-      cover: form.cover, // Uploaded image URL
+      cover: form.cover.trim(),
       rating: parseFloat(form.rating) || 0,
       genre: form.genre.trim(),
       platform: form.platform.trim(),
@@ -158,7 +140,7 @@ function AdminGames() {
     }
   };
 
-  // Load game data to form for editing
+  // Load game into form for editing
   const handleEdit = (game) => {
     setEditingId(game.id);
     setForm({
@@ -178,7 +160,7 @@ function AdminGames() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Delete game document
+  // Delete game
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this game?")) return;
 
@@ -316,7 +298,7 @@ function AdminGames() {
           )
         )}
 
-        {/* File input for cover image */}
+        {/* Cover image URL input */}
         <div style={{ marginBottom: "1rem" }}>
           <label
             style={{
@@ -326,13 +308,24 @@ function AdminGames() {
               color: "#555",
             }}
           >
-            Upload Cover Image *
+            Cover Image URL *
           </label>
           <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            style={{ width: "100%" }}
+            type="url"
+            name="cover"
+            value={form.cover}
+            onChange={handleChange}
+            placeholder="Paste your GitHub raw image URL here"
+            required
+            style={{
+              width: "100%",
+              padding: "0.4rem 0.6rem",
+              borderRadius: 4,
+              border: "1px solid #ccc",
+              fontSize: 16,
+              fontFamily: "inherit",
+              transition: "border-color 0.3s ease",
+            }}
           />
           {form.cover && (
             <img
