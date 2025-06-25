@@ -9,7 +9,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../firebase"; // No storage import needed
+import { db } from "../firebase"; 
 
 function AdminGames() {
   const gamesCollectionRef = collection(db, "games");
@@ -17,12 +17,11 @@ function AdminGames() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Form state
   const [form, setForm] = useState({
     id: null,
     title: "",
     price: "",
-    cover: "", // URL string input
+    cover: "", 
     rating: "",
     genre: "",
     platform: "",
@@ -31,20 +30,13 @@ function AdminGames() {
     descriptionSystem: "",
     descriptionPerformance: "",
     descriptionFeatures: "",
-    featured: false, // New featured checkbox state
+    featured: false, 
   });
-
   const [editingId, setEditingId] = useState(null);
-
-  // Filters
   const [filterTitle, setFilterTitle] = useState("");
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
-
-  // Featured games count state
   const [featuredCount, setFeaturedCount] = useState(0);
-
-  // Fetch all games from Firestore
   const fetchGames = async () => {
     setLoading(true);
     try {
@@ -60,8 +52,6 @@ function AdminGames() {
       setLoading(false);
     }
   };
-
-  // Fetch featured games count
   const fetchFeaturedCount = async () => {
     try {
       const q = query(gamesCollectionRef, where("featured", "==", true));
@@ -71,13 +61,10 @@ function AdminGames() {
       console.error("Error fetching featured games count:", error);
     }
   };
-
   useEffect(() => {
     fetchGames();
     fetchFeaturedCount();
   }, []);
-
-  // Handle form input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === "checkbox") {
@@ -86,8 +73,6 @@ function AdminGames() {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
-
-  // Reset form to empty values
   const resetForm = () => {
     setForm({
       id: null,
@@ -106,8 +91,6 @@ function AdminGames() {
     });
     setEditingId(null);
   };
-
-  // Add or update game document with featured limit check
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -120,8 +103,6 @@ function AdminGames() {
       alert("Cover image URL is required");
       return;
     }
-
-    // Count how many games are featured excluding current edited game
     if (form.featured) {
       const featuredExcludingCurrent = games.filter(
         (g) => g.featured && g.id !== editingId
@@ -158,7 +139,6 @@ function AdminGames() {
       },
       featured: form.featured,
     };
-
     try {
       if (editingId) {
         const gameDoc = doc(db, "games", editingId);
@@ -176,8 +156,6 @@ function AdminGames() {
       alert("Failed to save game: " + error.message);
     }
   };
-
-  // Load game into form for editing
   const handleEdit = (game) => {
     setEditingId(game.id);
     setForm({
@@ -197,8 +175,6 @@ function AdminGames() {
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  // Delete game
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this game?")) return;
 
@@ -214,8 +190,6 @@ function AdminGames() {
       alert("Failed to delete game: " + error.message);
     }
   };
-
-  // Filter games list
   const filteredGames = games.filter((game) => {
     const title = typeof game.title === "string" ? game.title : "";
     const genre = typeof game.genre === "string" ? game.genre : "";
@@ -240,8 +214,6 @@ function AdminGames() {
       <h1 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         Admin: Manage Games
       </h1>
-
-      {/* Add / Edit Game Form */}
       <form
         onSubmit={handleSubmit}
         style={{
@@ -257,8 +229,6 @@ function AdminGames() {
         >
           {editingId ? "Edit Game" : "Add New Game"}
         </h2>
-
-        {/* Text inputs */}
         {[
           {
             label: "Title *",
@@ -336,8 +306,6 @@ function AdminGames() {
             </div>
           )
         )}
-
-        {/* Cover image URL input */}
         <div style={{ marginBottom: "1rem" }}>
           <label
             style={{
@@ -379,8 +347,6 @@ function AdminGames() {
             />
           )}
         </div>
-
-        {/* Featured checkbox with featured count display and disable logic */}
         <div style={{ marginBottom: "1rem" }}>
           <label
             style={{
@@ -405,8 +371,6 @@ function AdminGames() {
             Featured Games: {featuredCount} / 10
           </div>
         </div>
-
-        {/* Description textareas */}
         {[
           {
             label: "Description - Short",
@@ -504,8 +468,6 @@ function AdminGames() {
       </form>
 
       <hr style={{ margin: "2rem 0" }} />
-
-      {/* Filters */}
       <section style={{ marginBottom: "1rem" }}>
         <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>
           Filter Games
@@ -560,8 +522,6 @@ function AdminGames() {
           />
         </div>
       </section>
-
-      {/* Games List */}
       <section>
         <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>
           Existing Games

@@ -1,6 +1,5 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Products from "./pages/Products";
@@ -12,7 +11,6 @@ import Signup from "./pages/Signup";
 import ResetPassword from "./pages/ResetPassword";
 import AdminGames from "./pages/GameAdmin";
 import Checkout from "./pages/Checkout";
-
 import ProtectedRoute from "./ProtectedRoute";
 import Layout from "./components/Layout";
 import { CartProvider } from "./context/CartContext";

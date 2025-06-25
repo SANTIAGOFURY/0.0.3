@@ -11,8 +11,6 @@ function Home() {
   const [featuredGames, setFeaturedGames] = useState([]);
   const [message, setMessage] = useState(null);
   const { addToCart } = useCart();
-
-  // Fetch featured games from Firestore and limit to 10
   useEffect(() => {
     const fetchFeaturedGames = async () => {
       try {
@@ -23,7 +21,7 @@ function Home() {
             id: doc.id,
             ...doc.data(),
           }))
-          .slice(0, 10); // Limit to 10 featured games
+          .slice(0, 10); 
         setFeaturedGames(fetchedGames);
       } catch (error) {
         console.error("Error fetching featured games:", error);
@@ -64,7 +62,6 @@ function Home() {
 
   return (
     <>
-      {/* Hero Section */}
       <section className="Hero-Section">
         <div className="Hero-container">
           <h4>
@@ -88,8 +85,6 @@ function Home() {
           <img src="/images/logo img.jpg" alt="Zonoj Store Logo" />
         </div>
       </section>
-
-      {/* Featured Games */}
       <section className="featured-section">
         <h2>Featured Games</h2>
         <div className="container">
@@ -122,8 +117,6 @@ function Home() {
           )}
         </div>
       </section>
-
-      {/* Genre Section */}
       <section className="Home-genres">
         <h2>Explore by Genre</h2>
         <div className="genres-container">
@@ -139,8 +132,6 @@ function Home() {
           ))}
         </div>
       </section>
-
-      {/* Why Choose Us */}
       <section className="why-choose-us">
         <h2>💡 Why Choose ZonoJ Store?</h2>
         <div className="reasons">
@@ -153,8 +144,6 @@ function Home() {
           ))}
         </div>
       </section>
-
-      {/* Toast Notification */}
       <Toast message={message} visible={!!message} />
     </>
   );

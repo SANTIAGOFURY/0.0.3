@@ -7,8 +7,6 @@ import {
   GithubAuthProvider,
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-
-// Your Firebase project configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBUx-YhQlJqJ2e5RRklBpPsdM2RBaQH-Ek",
   authDomain: "zonojstore.firebaseapp.com",
@@ -18,20 +16,12 @@ const firebaseConfig = {
   appId: "1:192122918263:web:9d094add2780d2f9b33d72",
   measurementId: "G-1TNCE10PWV",
 };
-
-// Initialize Firebase app
 const app = initializeApp(firebaseConfig);
-
-// Initialize Firebase Authentication and Firestore
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-// Set auth persistence to local (so user stays logged in after page reload)
 setPersistence(auth, browserLocalPersistence).catch((error) => {
   console.error("Failed to set persistence:", error);
 });
-
-// Authentication providers for OAuth sign-in
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
 
