@@ -1,14 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { db } from "../firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import "../Css/Home.css";
-import games from "../Data/FeatcheredGames";
 import genres from "../Data/Genres";
 import Toast from "../components/Toast";
 
 function Home() {
+  const [featuredGames, setFeaturedGames] = useState([]);
   const [message, setMessage] = useState(null);
   const { addToCart } = useCart();
+
+  // Fetch featured games from Firestore and limit to 10
+  useEffect(() => {
+    const fetchFeaturedGames = async () => {
+      try {
+        const q = query(collection(db, "games"), where("featured", "==", true));
+        const snapshot = await getDocs(q);
+        const fetchedGames = snapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .slice(0, 10); // Limit to 10 featured games
+        setFeaturedGames(fetchedGames);
+      } catch (error) {
+        console.error("Error fetching featured games:", error);
+      }
+    };
+
+    fetchFeaturedGames();
+  }, []);
+
+  const handleAddToCart = (game) => {
+    addToCart(game);
+    setMessage(`${game.title} added to cart!`);
+    setTimeout(() => setMessage(null), 3000);
+  };
 
   const reasons = [
     {
@@ -33,12 +62,6 @@ function Home() {
     },
   ];
 
-  const handleAddToCart = (game) => {
-    addToCart(game);
-    setMessage(`${game.title} added to cart!`);
-    setTimeout(() => setMessage(null), 3000);
-  };
-
   return (
     <>
       {/* Hero Section */}
@@ -53,17 +76,9 @@ function Home() {
           <p>
             Zonoj Game Store is an online platform where gamers can discover and
             buy top video games. We offer a wide selection of popular titles
-            across genres like Action, Racing, RPG, and more. Our store features
-            both new releases and timeless classics at competitive prices. Each
-            game comes with detailed info, cover images, and system
-            requirements. Users can create an account to access their cart, game
-            details, and personalized features. Secure login options include
-            email, Google, and GitHub authentication. Payments can be made via
-            PayPal, bank transfer, or cryptocurrency. We prioritize fast
-            delivery of digital keys and 24/7 customer support. Gamers can
-            easily search, filter, and explore based on their favorite
-            categories. Zonoj Store is built for gamers, by gamers — level up
-            your experience today!
+            across genres like Action, Racing, RPG, and more. Secure login, fast
+            delivery, and multiple payment options make your experience
+            seamless.
           </p>
           <Link to="/products">
             <button>Visit Our Products Page</button>
@@ -74,35 +89,41 @@ function Home() {
         </div>
       </section>
 
-      {/* Featured Games Section */}
+      {/* Featured Games */}
       <section className="featured-section">
         <h2>Featured Games</h2>
         <div className="container">
-          {games.map((game) => (
-            <div key={game.id} className="game-card">
-              <div className="image-wrapper">
-                <img src={game.cover} alt={game.title} loading="lazy" />
-                <div className="card-content">
-                  <h3>{game.title}</h3>
-                  <p className="price">{game.price}</p>
-                  <p className="rating">⭐ {game.rating}</p>
-                  <Link to={`/product/${game.id}`} className="btn-detail">
-                    View Details
-                  </Link>
-                  <button
-                    className="btn-add"
-                    onClick={() => handleAddToCart(game)}
-                  >
-                    Add to Cart
-                  </button>
+          {featuredGames.length === 0 ? (
+            <p style={{ color: "#ccc", textAlign: "center" }}>
+              No featured games available.
+            </p>
+          ) : (
+            featuredGames.map((game) => (
+              <div key={game.id} className="game-card">
+                <div className="image-wrapper">
+                  <img src={game.cover} alt={game.title} loading="lazy" />
+                  <div className="card-content">
+                    <h3>{game.title}</h3>
+                    <p className="price">{game.price}</p>
+                    <p className="rating">⭐ {game.rating}</p>
+                    <Link to={`/product/${game.id}`} className="btn-detail">
+                      View Details
+                    </Link>
+                    <button
+                      className="btn-add"
+                      onClick={() => handleAddToCart(game)}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </section>
 
-      {/* Genres Section */}
+      {/* Genre Section */}
       <section className="Home-genres">
         <h2>Explore by Genre</h2>
         <div className="genres-container">
@@ -119,7 +140,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
+      {/* Why Choose Us */}
       <section className="why-choose-us">
         <h2>💡 Why Choose ZonoJ Store?</h2>
         <div className="reasons">
