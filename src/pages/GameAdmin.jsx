@@ -6,6 +6,8 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  query,
+  where,
 } from "firebase/firestore";
 import { db } from "../firebase"; // No storage import needed
 
@@ -39,6 +41,9 @@ function AdminGames() {
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
 
+  // Featured games count state
+  const [featuredCount, setFeaturedCount] = useState(0);
+
   // Fetch all games from Firestore
   const fetchGames = async () => {
     setLoading(true);
@@ -56,8 +61,20 @@ function AdminGames() {
     }
   };
 
+  // Fetch featured games count
+  const fetchFeaturedCount = async () => {
+    try {
+      const q = query(gamesCollectionRef, where("featured", "==", true));
+      const snapshot = await getDocs(q);
+      setFeaturedCount(snapshot.size);
+    } catch (error) {
+      console.error("Error fetching featured games count:", error);
+    }
+  };
+
   useEffect(() => {
     fetchGames();
+    fetchFeaturedCount();
   }, []);
 
   // Handle form input changes
@@ -106,11 +123,11 @@ function AdminGames() {
 
     // Count how many games are featured excluding current edited game
     if (form.featured) {
-      const featuredCount = games.filter(
+      const featuredExcludingCurrent = games.filter(
         (g) => g.featured && g.id !== editingId
       ).length;
 
-      if (featuredCount >= 10) {
+      if (featuredExcludingCurrent >= 10) {
         alert("You can only have up to 10 featured games.");
         return;
       }
@@ -151,7 +168,8 @@ function AdminGames() {
         await addDoc(gamesCollectionRef, newGame);
         alert("Game added successfully");
       }
-      fetchGames();
+      await fetchGames();
+      await fetchFeaturedCount();
       resetForm();
     } catch (error) {
       console.error("Error saving game:", error);
@@ -189,7 +207,8 @@ function AdminGames() {
       await deleteDoc(gameDoc);
       alert("Game deleted successfully");
       if (editingId === id) resetForm();
-      fetchGames();
+      await fetchGames();
+      await fetchFeaturedCount();
     } catch (error) {
       console.error("Error deleting game:", error);
       alert("Failed to delete game: " + error.message);
@@ -361,7 +380,7 @@ function AdminGames() {
           )}
         </div>
 
-        {/* Featured checkbox */}
+        {/* Featured checkbox with featured count display and disable logic */}
         <div style={{ marginBottom: "1rem" }}>
           <label
             style={{
@@ -378,9 +397,13 @@ function AdminGames() {
               name="featured"
               checked={form.featured}
               onChange={handleChange}
+              disabled={!form.featured && featuredCount >= 10}
             />
             Featured Game
           </label>
+          <div style={{ marginTop: 6, fontSize: 14, color: "#555" }}>
+            Featured Games: {featuredCount} / 10
+          </div>
         </div>
 
         {/* Description textareas */}
