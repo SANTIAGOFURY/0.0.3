@@ -13,7 +13,6 @@
   --home-card-shadow: 0 4px 32px rgba(0, 0, 0, 0.25);
   --home-text-color: #fff;
 }
-
 .products-layout {
   display: flex;
   gap: 2rem;
@@ -24,7 +23,6 @@
   position: relative;
   z-index: 1;
 }
-
 .products-sidebar {
   min-width: 250px;
   background-color: var(--products-card-bg);
@@ -34,23 +32,19 @@
   height: fit-content;
   font-weight: 500;
 }
-
 .products-sidebar h3 {
   color: var(--products-accent);
   margin-bottom: 1rem;
   font-size: 1.3rem;
 }
-
 .genre-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-
 .genre-list li {
   margin-bottom: 1rem;
 }
-
 .genre-list a {
   color: var(--products-text);
   text-decoration: none;
@@ -60,21 +54,18 @@
   padding: 0.3rem 0.5rem;
   border-radius: 6px;
 }
-
 .genre-list a:hover,
 .genre-list .active-genre {
   color: var(--products-hover);
   background-color: rgba(106, 13, 173, 0.15);
   font-weight: 600;
 }
-
 .products-page {
   flex-grow: 1;
   color: var(--products-text);
   text-align: center;
   position: relative;
 }
-
 .search-input {
   position: fixed;
   top: 1rem;
@@ -93,12 +84,10 @@
   transition: border-color 0.3s ease;
   z-index: 1000;
 }
-
 .search-input:focus {
   outline: none;
   border-color: var(--products-hover);
 }
-
 .products-title {
   margin-top: 3.5rem;
   font-size: 2.2rem;
@@ -106,13 +95,11 @@
   text-shadow: 0 0 8px var(--products-hover);
   margin-bottom: 2rem;
 }
-
 .no-games-msg {
   font-size: 1.2rem;
   color: #ff5555;
   margin-top: 2rem;
 }
-
 .products-grid {
   display: flex;
   flex-wrap: wrap;
@@ -120,7 +107,6 @@
   gap: 1.5rem;
   padding-bottom: 2rem;
 }
-
 .game-card {
   flex: 0 0 calc(20% - 1.6rem);
   height: 300px;
@@ -132,24 +118,20 @@
   background-color: var(--products-card-bg);
   cursor: pointer;
 }
-
 .game-card:hover {
   transform: scale(1.03);
 }
-
 .image-wrapper {
   width: 100%;
   height: 100%;
   position: relative;
 }
-
 .image-wrapper img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   filter: brightness(0.5);
 }
-
 .card-content {
   position: absolute;
   top: 50%;
@@ -174,9 +156,9 @@
   text-align: center;
   position: absolute;
   top: -70%;
-  left: 3rem;
-  width: 15rem;
-  transform: translateX(-3.8rem);
+  left: 50%;
+  width: 100%;
+  transform: translateX(-50%);
 }
 
 .card-content .price {
@@ -221,8 +203,7 @@
 
 @media (max-width: 1400px) {
   .card-content h3 {
-    color: blue;
-    left: 3.9rem;
+    color: white;
   }
   .game-card {
     min-width: 15rem;
@@ -236,8 +217,7 @@
     width: 160px;
   }
   .card-content h3 {
-    color: red;
-    left: 3.8rem;
+    color: white;
   }
   .search-input {
     margin-left: 0;
@@ -258,8 +238,6 @@
   }
   .card-content h3 {
     color: white;
-    left: 3.8rem;
-    width: 21.2rem;
   }
   .products-sidebar {
     width: 100%;
@@ -293,8 +271,6 @@
   }
   .card-content h3 {
     color: white;
-    left: 3rem;
-    width: 21.2rem;
   }
 }
 .btn-add {

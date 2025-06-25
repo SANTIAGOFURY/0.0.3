@@ -45,7 +45,6 @@ function Header() {
           </li>
         </ul>
       </div>
-
       <div className="head-right">
         <h4>
           Made it with love by{" "}
@@ -58,7 +57,7 @@ function Header() {
           onClick={handleLogout}
           aria-label="Logout"
         >
-          Logout
+          {auth.currentUser ? "Logout" : "Register"}
         </button>
 
         <button
