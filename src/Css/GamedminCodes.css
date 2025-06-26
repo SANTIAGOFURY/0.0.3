@@ -1,0 +1,155 @@
+/* AdminGameCodes.css */
+
+.container {
+  max-width: 900px;
+  margin: 1.5rem auto;
+  padding: 1rem 2rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #222;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  font-size: 1.9rem;
+}
+
+.filters,
+.code-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.filters select,
+.filters input[type="file"],
+.code-form input,
+.code-form select,
+.code-form button {
+  padding: 0.5rem 0.75rem;
+  border: 1.8px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.filters select:hover,
+.filters input[type="file"]:hover,
+.code-form input:hover,
+.code-form select:hover,
+.code-form button:hover {
+  border-color: #007bff;
+  cursor: pointer;
+}
+
+.code-form input[type="number"] {
+  width: 130px;
+}
+
+.code-form button {
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+  border: none;
+  min-width: 120px;
+}
+
+.code-form button:active {
+  background-color: #0056b3;
+}
+
+ul.code-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.code-list li {
+  background-color: white;
+  border: 2px solid #007bff;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 5px rgb(0 123 255 / 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.code-list li.used {
+  background-color: #f8f9fa;
+  border-color: #6c757d;
+  color: #6c757d;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.code-list li strong {
+  font-size: 1.2rem;
+  color: #007bff;
+}
+
+.code-list .price-info {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.buttons-row {
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.buttons-row button {
+  flex: 1;
+  padding: 0.4rem 0;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background-color 0.25s ease;
+  cursor: pointer;
+}
+
+.buttons-row button.mark {
+  background-color: #28a745;
+  color: white;
+}
+
+.buttons-row button.mark.used {
+  background-color: #ffc107;
+  color: black;
+}
+
+.buttons-row button.delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.buttons-row button:hover {
+  opacity: 0.85;
+}
+
+/* Responsive */
+
+@media (max-width: 650px) {
+  .filters,
+  .code-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .code-form input[type="number"] {
+    width: 100%;
+  }
+
+  .buttons-row {
+    flex-direction: column;
+  }
+}

@@ -15,6 +15,14 @@ import ProtectedRoute from "./ProtectedRoute";
 import Layout from "./components/Layout";
 import { CartProvider } from "./context/CartContext";
 import Loader from "./components/Loading";
+import AdminGameCodes from "./pages/AdminGameCodes";
+
+// Wrapper to get gameId param from URL and pass to AdminGameCodes component
+import { useParams } from "react-router-dom";
+function AdminGameCodesWrapper() {
+  const { gameId } = useParams();
+  return <AdminGameCodes gameId={gameId} />;
+}
 
 function App() {
   const location = useLocation();
@@ -41,6 +49,7 @@ function App() {
             <Route path="/products" element={<Products />} />
             <Route path="/product/:id" element={<GameDetails />} />
             <Route path="/support" element={<Support />} />
+
             <Route
               path="/admin"
               element={
@@ -49,6 +58,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route
+              path="/admin/codes/:gameId"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AdminGameCodesWrapper />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="/cart"
               element={

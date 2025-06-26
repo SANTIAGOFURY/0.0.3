@@ -127,7 +127,7 @@ header .head-right .register-btn {
   width: 4rem;
   height: 2rem;
   background-color: var(--header-btn-bg);
-  color: var(--header-text-color);
+  color: var(--header-text-color);  
   border: none;
   font-size: 0.7rem;
   border-radius: 5px;
@@ -163,6 +163,11 @@ header .head-right h4 a::after {
 }
 header .head-right h4 a:hover::after {
   width: 100%;
+}
+header .head-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 @media (max-width: 1024px) {
   header {
@@ -234,8 +239,15 @@ header .head-right .menu-btn:hover {
     align-items: center;
   }
 }
-
+@media (min-width: 1026px) {
+  header .head-center ul .cart-btn-menu {
+    display: none;
+  }
+}
 @media (max-width: 1025px) {
+  header .head-right .cart-btn {
+    display: none;
+  }
   header .head-left h2 {
     font-size: 1rem;
   }
@@ -262,9 +274,6 @@ header .head-right .menu-btn:hover {
     margin-top: -0.5rem;
     font-size: 0.7rem;
   }
-  header .head-right h4 {
-    display: none;
-  }
   header .head-center {
     display: none;
     width: 100vw;
@@ -286,4 +295,23 @@ header .head-right .menu-btn:hover {
     gap: 1rem;
     width: 100%;
   }
+}
+
+header .head-center .cart-btn {
+  width: 5rem;
+  height: 2rem;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+}
+header .head-center .cart-btn a {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+header .head-center .cart-btn a:hover {
+  color: gold;
 }

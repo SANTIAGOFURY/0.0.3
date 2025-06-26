@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./../Css/App.css";
 import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
+import { FaShoppingCart } from "react-icons/fa";
 import { auth } from "../firebase";
 
 function Header() {
@@ -35,23 +36,22 @@ function Header() {
             <Link to="/products">Products</Link>
           </li>
           <li>
-            <Link to="/cart">Cart</Link>
-          </li>
-          <li>
             <Link to="/about">About</Link>
           </li>
           <li>
             <Link to="/support">Support</Link>
           </li>
+          <li>
+            <button className="cart-btn">
+              <Link to="/cart">
+                {" "}
+                <FaShoppingCart style={{ marginRight: "5px" }} />
+              </Link>
+            </button>
+          </li>
         </ul>
       </div>
       <div className="head-right">
-        <h4>
-          Made it with love by{" "}
-          <a href="" style={{ color: "red" }}>
-            The One Eye Coder
-          </a>
-        </h4>
         <button
           className="register-btn"
           onClick={handleLogout}

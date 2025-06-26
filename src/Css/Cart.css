@@ -146,9 +146,8 @@
 .card-cart-content .price {
   color: gold;
   font-weight: bold;
-  font-size: .8rem;
+  font-size: 0.8rem;
   margin-bottom: 0.3rem;
-  
 }
 .card-cart-content .rating {
   font-size: 0.85rem;
@@ -264,6 +263,7 @@
   width: 100vw;
   min-height: 80vh;
   position: relative;
+
 }
 .payement::after {
   content: "";
@@ -280,10 +280,15 @@
   opacity: 0.2;
 }
 .payment-summary {
-  margin: 2rem auto;
-  max-width: 500px;
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  width: 40rem;
   padding: 2rem;
   background: #1a1a2e;
+  height: 80vh;
+  overflow-y: scroll;
   color: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);

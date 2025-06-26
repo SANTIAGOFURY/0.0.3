@@ -9,7 +9,8 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../firebase"; 
+import { db } from "../firebase";
+import { Link } from "react-router-dom";
 
 function AdminGames() {
   const gamesCollectionRef = collection(db, "games");
@@ -21,7 +22,7 @@ function AdminGames() {
     id: null,
     title: "",
     price: "",
-    cover: "", 
+    cover: "",
     rating: "",
     genre: "",
     platform: "",
@@ -30,13 +31,14 @@ function AdminGames() {
     descriptionSystem: "",
     descriptionPerformance: "",
     descriptionFeatures: "",
-    featured: false, 
+    featured: false,
   });
   const [editingId, setEditingId] = useState(null);
   const [filterTitle, setFilterTitle] = useState("");
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
   const [featuredCount, setFeaturedCount] = useState(0);
+
   const fetchGames = async () => {
     setLoading(true);
     try {
@@ -52,6 +54,7 @@ function AdminGames() {
       setLoading(false);
     }
   };
+
   const fetchFeaturedCount = async () => {
     try {
       const q = query(gamesCollectionRef, where("featured", "==", true));
@@ -61,10 +64,12 @@ function AdminGames() {
       console.error("Error fetching featured games count:", error);
     }
   };
+
   useEffect(() => {
     fetchGames();
     fetchFeaturedCount();
   }, []);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === "checkbox") {
@@ -73,6 +78,7 @@ function AdminGames() {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
+
   const resetForm = () => {
     setForm({
       id: null,
@@ -91,6 +97,7 @@ function AdminGames() {
     });
     setEditingId(null);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -98,7 +105,6 @@ function AdminGames() {
       alert("Title is required");
       return;
     }
-
     if (!form.cover.trim()) {
       alert("Cover image URL is required");
       return;
@@ -139,6 +145,7 @@ function AdminGames() {
       },
       featured: form.featured,
     };
+
     try {
       if (editingId) {
         const gameDoc = doc(db, "games", editingId);
@@ -156,6 +163,7 @@ function AdminGames() {
       alert("Failed to save game: " + error.message);
     }
   };
+
   const handleEdit = (game) => {
     setEditingId(game.id);
     setForm({
@@ -175,6 +183,7 @@ function AdminGames() {
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this game?")) return;
 
@@ -190,6 +199,7 @@ function AdminGames() {
       alert("Failed to delete game: " + error.message);
     }
   };
+
   const filteredGames = games.filter((game) => {
     const title = typeof game.title === "string" ? game.title : "";
     const genre = typeof game.genre === "string" ? game.genre : "";
@@ -669,6 +679,24 @@ function AdminGames() {
                     >
                       Delete
                     </button>
+                    <Link
+                      to={`/admin/codes/${game.id}`}
+                      style={{
+                        flex: 1,
+                        backgroundColor: "#4CAF50",
+                        border: "none",
+                        color: "white",
+                        padding: "0.4rem 0",
+                        borderRadius: 5,
+                        cursor: "pointer",
+                        fontWeight: "600",
+                        textAlign: "center",
+                        textDecoration: "none",
+                        display: "inline-block",
+                      }}
+                    >
+                      Manage Keys
+                    </Link>
                   </div>
                 </div>
               </div>
