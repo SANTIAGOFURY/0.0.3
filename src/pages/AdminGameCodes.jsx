@@ -253,7 +253,7 @@ function AdminGameCodes() {
           placeholder="Buying Price (calculated)"
           readOnly
         />
-        <button className="btn-add" onClick={addCode}>
+        <button className="btn-code-add" onClick={addCode}>
           Add Code
         </button>
       </div>
