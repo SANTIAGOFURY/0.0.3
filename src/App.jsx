@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Products from "./pages/Products";
@@ -17,11 +18,14 @@ import { CartProvider } from "./context/CartContext";
 import Loader from "./components/Loading";
 import AdminGameCodes from "./pages/AdminGameCodes";
 
-// Wrapper to get gameId param from URL and pass to AdminGameCodes component
-import { useParams } from "react-router-dom";
-function AdminGameCodesWrapper() {
-  const { gameId } = useParams();
-  return <AdminGameCodes gameId={gameId} />;
+// Optional: Add a NotFound component/page for unknown routes
+function NotFound() {
+  return (
+    <div style={{ padding: "2rem", textAlign: "center" }}>
+      <h1>404 - Page Not Found</h1>
+      <p>The page you requested does not exist.</p>
+    </div>
+  );
 }
 
 function App() {
@@ -40,9 +44,12 @@ function App() {
         <Loader />
       ) : (
         <Routes>
+          {/* Public Routes without Layout */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ResetPassword />} />
+
+          {/* Routes wrapped in Layout */}
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -50,6 +57,7 @@ function App() {
             <Route path="/product/:id" element={<GameDetails />} />
             <Route path="/support" element={<Support />} />
 
+            {/* Admin routes protected and requiring admin role */}
             <Route
               path="/admin"
               element={
@@ -63,11 +71,12 @@ function App() {
               path="/admin/codes/:gameId"
               element={
                 <ProtectedRoute requireAdmin={true}>
-                  <AdminGameCodesWrapper />
+                  <AdminGameCodes />
                 </ProtectedRoute>
               }
             />
 
+            {/* User protected routes */}
             <Route
               path="/cart"
               element={
@@ -84,6 +93,9 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Catch-all for unmatched routes */}
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       )}

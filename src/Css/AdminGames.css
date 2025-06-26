@@ -284,3 +284,6 @@
     grid-template-columns: 1fr;
   }
 }
+.manage {
+  font-size: .7rem;
+}

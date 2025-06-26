@@ -9,67 +9,103 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
+import { useParams } from "react-router-dom";
 import "../Css/GamedminCodes.css";
 import { db } from "../firebase";
 import Papa from "papaparse"; // for CSV parsing
 import { saveAs } from "file-saver"; // for CSV export
-import Toast from "../components/Toast"; // your custom toast notifications
+import Toast from "../components/Toast";
 
-function AdminGameCodes({ gameId }) {
+function AdminGameCodes() {
+  const { gameId } = useParams();
+
   const [codes, setCodes] = useState([]);
   const [code, setCode] = useState("");
   const [type, setType] = useState("Steam");
   const [originPrice, setOriginPrice] = useState("");
   const [coefficient, setCoefficient] = useState(1.5);
+  const [buyingPrice, setBuyingPrice] = useState("");
   const [filterUsed, setFilterUsed] = useState("all");
   const [filterType, setFilterType] = useState("all");
 
-  const codesRef = collection(db, "games", gameId, "codes");
+  // Handle missing Game ID
+  if (!gameId) {
+    return <p>Missing Game ID in URL.</p>;
+  }
 
-  const fetchCodes = async () => {
-    try {
-      let q = query(codesRef, orderBy("code"));
-      const snapshot = await getDocs(q);
-      let results = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-
-      if (filterUsed !== "all") {
-        const usedBool = filterUsed === "used";
-        results = results.filter((c) => c.used === usedBool);
-      }
-      if (filterType !== "all") {
-        results = results.filter((c) => c.type === filterType);
-      }
-
-      setCodes(results);
-    } catch (error) {
-      Toast.error("Failed to fetch codes: " + error.message);
+  // Automatically calculate the buying price
+  useEffect(() => {
+    const origin = parseFloat(originPrice);
+    if (!isNaN(origin) && origin > 0 && coefficient > 0) {
+      setBuyingPrice((origin * coefficient).toFixed(2));
+    } else {
+      setBuyingPrice("");
     }
-  };
+  }, [originPrice, coefficient]);
+
+  // Fetch codes with filters inside useEffect
+  useEffect(() => {
+    if (!gameId) return;
+
+    const fetchCodes = async () => {
+      try {
+        const codesRef = collection(db, "games", gameId, "codes");
+        const q = query(codesRef, orderBy("code"));
+        const snapshot = await getDocs(q);
+        let results = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        if (filterUsed !== "all") {
+          const usedBool = filterUsed === "used";
+          results = results.filter((c) => c.used === usedBool);
+        }
+        if (filterType !== "all") {
+          results = results.filter((c) => c.type === filterType);
+        }
+
+        setCodes(results);
+      } catch (error) {
+        Toast.error("Failed to fetch codes: " + error.message);
+      }
+    };
+
+    fetchCodes();
+  }, [gameId, filterUsed, filterType]);
 
   const addCode = async () => {
     const origin = parseFloat(originPrice);
+    const buying = parseFloat(buyingPrice);
     if (!code.trim()) return Toast.error("Please enter a code.");
     if (isNaN(origin) || origin <= 0)
       return Toast.error("Enter a valid origin price.");
+    if (isNaN(buying) || buying <= 0)
+      return Toast.error("Buying price calculation failed.");
 
     try {
-      const buyingPrice = +(origin * coefficient).toFixed(2);
-      const profit = +(buyingPrice - origin).toFixed(2);
+      const profit = +(buying - origin).toFixed(2);
+      const codesRef = collection(db, "games", gameId, "codes");
 
       await addDoc(codesRef, {
         code: code.trim(),
         type,
         used: false,
         originPrice: origin,
-        buyingPrice,
+        buyingPrice: buying,
         profit,
         expiresAt: null,
       });
 
       setCode("");
       setOriginPrice("");
+      setBuyingPrice("");
       Toast.success("Code added!");
-      fetchCodes();
+
+      // Refresh codes list after adding
+      const q = query(codesRef, orderBy("code"));
+      const snapshot = await getDocs(q);
+      setCodes(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     } catch (error) {
       Toast.error("Failed to add code: " + error.message);
     }
@@ -79,7 +115,12 @@ function AdminGameCodes({ gameId }) {
     try {
       await deleteDoc(doc(db, "games", gameId, "codes", id));
       Toast.success("Code deleted");
-      fetchCodes();
+
+      // Refresh codes list after deleting
+      const codesRef = collection(db, "games", gameId, "codes");
+      const q = query(codesRef, orderBy("code"));
+      const snapshot = await getDocs(q);
+      setCodes(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     } catch (error) {
       Toast.error("Failed to delete code: " + error.message);
     }
@@ -90,7 +131,12 @@ function AdminGameCodes({ gameId }) {
       await updateDoc(doc(db, "games", gameId, "codes", id), {
         used: !current,
       });
-      fetchCodes();
+
+      // Refresh codes list after marking used/unused
+      const codesRef = collection(db, "games", gameId, "codes");
+      const q = query(codesRef, orderBy("code"));
+      const snapshot = await getDocs(q);
+      setCodes(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     } catch (error) {
       Toast.error("Failed to update code status: " + error.message);
     }
@@ -99,13 +145,16 @@ function AdminGameCodes({ gameId }) {
   const handleCSVUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
     Papa.parse(file, {
       header: true,
       complete: async (results) => {
         try {
+          const codesRef = collection(db, "games", gameId, "codes");
+
           for (const row of results.data) {
             const origin = parseFloat(row.originPrice);
-            if (!row.code || isNaN(origin) || origin <= 0) continue; // skip invalid rows
+            if (!row.code || isNaN(origin) || origin <= 0) continue;
 
             const buyingPrice = +(origin * coefficient).toFixed(2);
             const profit = +(buyingPrice - origin).toFixed(2);
@@ -120,8 +169,13 @@ function AdminGameCodes({ gameId }) {
               expiresAt: null,
             });
           }
+
           Toast.success("Bulk upload complete");
-          fetchCodes();
+
+          // Refresh codes list after bulk upload
+          const q = query(codesRef, orderBy("code"));
+          const snapshot = await getDocs(q);
+          setCodes(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
         } catch (error) {
           Toast.error("Failed during bulk upload: " + error.message);
         }
@@ -135,11 +189,6 @@ function AdminGameCodes({ gameId }) {
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, `codes-${gameId}.csv`);
   };
-
-  useEffect(() => {
-    fetchCodes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterUsed, filterType]);
 
   return (
     <div className="admin-game-codes-container">
@@ -197,6 +246,12 @@ function AdminGameCodes({ gameId }) {
           step="0.1"
           onChange={(e) => setCoefficient(parseFloat(e.target.value))}
           title="Coefficient to multiply origin price by to get buying price"
+        />
+        <input
+          value={buyingPrice}
+          type="number"
+          placeholder="Buying Price (calculated)"
+          readOnly
         />
         <button className="btn-add" onClick={addCode}>
           Add Code

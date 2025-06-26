@@ -21,7 +21,7 @@ function AdminGames() {
   const [form, setForm] = useState({
     id: null,
     title: "",
-    price: "",
+    price: "", // We'll treat as number string and parse
     cover: "",
     rating: "",
     genre: "",
@@ -33,11 +33,25 @@ function AdminGames() {
     descriptionFeatures: "",
     featured: false,
   });
+
+  const [coefficient, setCoefficient] = useState(1.5);
+  const [buyingPrice, setBuyingPrice] = useState("");
+
   const [editingId, setEditingId] = useState(null);
   const [filterTitle, setFilterTitle] = useState("");
   const [filterId, setFilterId] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
   const [featuredCount, setFeaturedCount] = useState(0);
+
+  // Calculate buyingPrice automatically whenever price or coefficient changes
+  useEffect(() => {
+    const origin = parseFloat(form.price);
+    if (!isNaN(origin) && origin > 0 && coefficient > 0) {
+      setBuyingPrice((origin * coefficient).toFixed(2));
+    } else {
+      setBuyingPrice("");
+    }
+  }, [form.price, coefficient]);
 
   const fetchGames = async () => {
     setLoading(true);
@@ -95,6 +109,8 @@ function AdminGames() {
       descriptionFeatures: "",
       featured: false,
     });
+    setCoefficient(1.5);
+    setBuyingPrice("");
     setEditingId(null);
   };
 
@@ -120,9 +136,22 @@ function AdminGames() {
       }
     }
 
+    // Validate numeric fields
+    const origin = parseFloat(form.price);
+    if (isNaN(origin) || origin <= 0) {
+      alert("Enter a valid origin price");
+      return;
+    }
+    const buying = parseFloat(buyingPrice);
+    if (isNaN(buying) || buying <= 0) {
+      alert("Buying price calculation failed");
+      return;
+    }
+
     const newGame = {
       title: form.title.trim(),
-      price: form.price.trim(),
+      price: origin,
+      buyingPrice: buying,
       cover: form.cover.trim(),
       rating: parseFloat(form.rating) || 0,
       genre: form.genre.trim(),
@@ -169,7 +198,7 @@ function AdminGames() {
     setForm({
       id: game.id,
       title: game.title || "",
-      price: game.price || "",
+      price: game.price ? game.price.toString() : "",
       cover: game.cover || "",
       rating: game.rating || "",
       genre: game.genre || "",
@@ -181,6 +210,7 @@ function AdminGames() {
       descriptionFeatures: (game.description?.features || []).join(", "),
       featured: !!game.featured,
     });
+    setCoefficient(1.5);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -239,6 +269,8 @@ function AdminGames() {
         >
           {editingId ? "Edit Game" : "Add New Game"}
         </h2>
+
+        {/* Basic inputs */}
         {[
           {
             label: "Title *",
@@ -248,10 +280,30 @@ function AdminGames() {
             required: true,
           },
           {
-            label: "Price",
+            label: "Origin Price (MAD)",
             name: "price",
-            type: "text",
-            placeholder: 'e.g. "$39.99"',
+            type: "number",
+            min: 0,
+            step: "0.01",
+            placeholder: "e.g. 39.99",
+          },
+          {
+            label: "Coefficient (for Buying Price)",
+            name: "coefficient",
+            type: "number",
+            min: 0,
+            step: "0.1",
+            placeholder: "e.g. 1.5",
+            value: coefficient,
+            onChange: (e) => setCoefficient(parseFloat(e.target.value)),
+          },
+          {
+            label: "Buying Price (auto-calculated)",
+            name: "buyingPrice",
+            type: "number",
+            placeholder: "Buying Price",
+            value: buyingPrice,
+            readOnly: true,
           },
           {
             label: "Rating",
@@ -281,7 +333,18 @@ function AdminGames() {
             placeholder: "e.g. 2013",
           },
         ].map(
-          ({ label, name, type, placeholder, min, max, step, required }) => (
+          ({
+            label,
+            name,
+            type,
+            placeholder,
+            min,
+            max,
+            step,
+            required,
+            value,
+            onChange,
+          }) => (
             <div key={name} style={{ marginBottom: "1rem" }}>
               <label
                 style={{
@@ -299,10 +362,11 @@ function AdminGames() {
                 min={min}
                 max={max}
                 step={step}
-                value={form[name]}
-                onChange={handleChange}
+                value={value !== undefined ? value : form[name]}
+                onChange={onChange || handleChange}
                 placeholder={placeholder}
                 required={required}
+                readOnly={name === "buyingPrice"}
                 style={{
                   width: "100%",
                   padding: "0.4rem 0.6rem",
@@ -311,11 +375,14 @@ function AdminGames() {
                   fontSize: 16,
                   fontFamily: "inherit",
                   transition: "border-color 0.3s ease",
+                  backgroundColor: name === "buyingPrice" ? "#eee" : "inherit",
                 }}
               />
             </div>
           )
         )}
+
+        {/* Cover input */}
         <div style={{ marginBottom: "1rem" }}>
           <label
             style={{
@@ -357,6 +424,8 @@ function AdminGames() {
             />
           )}
         </div>
+
+        {/* Featured checkbox */}
         <div style={{ marginBottom: "1rem" }}>
           <label
             style={{
@@ -381,6 +450,8 @@ function AdminGames() {
             Featured Games: {featuredCount} / 10
           </div>
         </div>
+
+        {/* Description fields */}
         {[
           {
             label: "Description - Short",
@@ -437,6 +508,7 @@ function AdminGames() {
           </div>
         ))}
 
+        {/* Buttons */}
         <div
           style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
         >
@@ -477,6 +549,7 @@ function AdminGames() {
         </div>
       </form>
 
+      {/* Filters and game list below unchanged */}
       <hr style={{ margin: "2rem 0" }} />
       <section style={{ marginBottom: "1rem" }}>
         <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>
@@ -610,7 +683,16 @@ function AdminGames() {
                       color: "#555",
                     }}
                   >
-                    <strong>Price:</strong> {game.price || "N/A"}
+                    <strong>Origin Price:</strong> {game.price ?? "N/A"}
+                  </p>
+                  <p
+                    style={{
+                      margin: "0.15rem 0",
+                      fontSize: "0.9rem",
+                      color: "#555",
+                    }}
+                  >
+                    <strong>Buying Price:</strong> {game.buyingPrice ?? "N/A"}
                   </p>
                   <p
                     style={{
@@ -681,21 +763,23 @@ function AdminGames() {
                     </button>
                     <Link
                       to={`/admin/codes/${game.id}`}
+                      className="manage"
                       style={{
-                        flex: 1,
-                        backgroundColor: "#4CAF50",
-                        border: "none",
-                        color: "white",
-                        padding: "0.4rem 0",
-                        borderRadius: 5,
-                        cursor: "pointer",
-                        fontWeight: "600",
-                        textAlign: "center",
+                        width:"3rem",
+                        fontSize: ".6rem",
+                        padding: '0',
+                        backgroundColor: "#f5c542",
+                        color: "#222",
+                        borderRadius: "4px",  
+                        fontWeight: 600,
                         textDecoration: "none",
-                        display: "inline-block",
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent:'center',
+                        transition: "background 0.2s",
                       }}
                     >
-                      Manage Keys
+                    Keys
                     </Link>
                   </div>
                 </div>
