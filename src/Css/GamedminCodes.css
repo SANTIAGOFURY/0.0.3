@@ -92,7 +92,7 @@
 }
 
 .btn-code-add {
-  position: static; /* or just remove position:absolute */
+  position: static; 
   background-color: #4caf50;
   color: white;
   border: none;
